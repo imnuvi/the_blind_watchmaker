@@ -10,14 +10,15 @@ function create_watches(x_rows,y_rows){
   for (let i=0; i<x_rows; i++){
     watches[i] = new Array(y_rows);
   }
-  fill_watches(random(0,5));
+  fill_watches(block_size/2);
 }
 
 function fill_watches(value){
   for (let i=0; i<watches.length; i++){
     for (let j=0; j<watches[0].length; j++){
-      filler = value + random(-5,5);
-      watches[i][j] = new watch(i,j,filler);
+      filler = map(random(0,1),0,1,-5,5);
+      watches[i][j] = new watch(i,j,filler,value);
+      console.log(filler);
     }
   }
 }
