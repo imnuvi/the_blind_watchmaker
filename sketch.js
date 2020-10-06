@@ -10,15 +10,15 @@ function create_watches(x_rows,y_rows){
   for (let i=0; i<x_rows; i++){
     watches[i] = new Array(y_rows);
   }
-  fill_watches(block_size/2);
+  fill_watches([block_size/2,block_size/2]);
 }
 
-function fill_watches(value){
+function fill_watches(m_lst){
   for (let i=0; i<watches.length; i++){
     for (let j=0; j<watches[0].length; j++){
-      filler = map(random(0,1),0,1,-5,5);
-      watches[i][j] = new watch(i,j,filler,value);
-      console.log(filler);
+      // filler = map(random(0,1),0,1,-5,5);
+      watches[i][j] = new watch(i,j,m_lst);
+      // console.log(filler);
     }
   }
 }
@@ -42,8 +42,8 @@ function mousePressed(){
 }
 
 function selection(the_watch){
-  mag = the_watch.mag;
-  fill_watches(mag);
+  the_mag = the_watch.mag_lst;
+  fill_watches(the_mag);
 }
 
 function init(){
