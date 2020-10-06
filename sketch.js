@@ -5,23 +5,22 @@ let width_count;
 let height_count;
 var watches;
 
-function create_watches(width_n,height_n){
-  watches = new Array(width_n);
-  for (let j=0; j<width_n; j++){
-      watches[j] = new Array(height_n);
-    }
+function create_watches(x_rows,y_rows){
+  watches = new Array(x_rows)
+  for (let i=0; i<x_rows; i++){
+    watches[i] = new Array(y_rows);
+  }
   fill_watches();
 }
 
-
 function fill_watches(){
-  fill('white');
-  for (let i=0; i<width_count; i++){
-    for (let j=0; j<height_count; j++){
-      watches[i][j] = new watch(i*block_size,j*block_size);
+  for (let i=0; i<watches.length; i++){
+    for (let j=0; j<watches[0].length; j++){
+      watches[i][j] = new watch(i,j,random(0,1));
     }
   }
 }
+
 
 function reportsize() {
   resizeCanvas(windowWidth, windowHeight);
@@ -40,10 +39,9 @@ function init(){
   canvas.position(0,0);
   canvas.style('z-index','-1');
 
-  width_count = ww/block_size;
-  height_count = wh/block_size;
-  create_watches();
-
+  width_count = round(ww/block_size) + 2;
+  height_count = round(wh/block_size) + 2;
+  create_watches(width_count,height_count);
 }
 
 function setup(){
@@ -51,11 +49,11 @@ function setup(){
 }
 
 function draw(){
-  circle(mouseX,mouseY,20);
-
-  for (let i=0; i<width_count; i++){
-    for (let j=0; j<height_count; j++){
+  for (let i=0; i<watches.length ; i++){
+    for (let j=0; j<watches[0].length; j++){
+      rect(i*block_size,j*block_size,block_size);
       watches[i][j].show();
     }
   }
+    circle(mouseX,mouseY,20);
 }
