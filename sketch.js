@@ -10,13 +10,14 @@ function create_watches(x_rows,y_rows){
   for (let i=0; i<x_rows; i++){
     watches[i] = new Array(y_rows);
   }
-  fill_watches();
+  fill_watches(random(0,5));
 }
 
-function fill_watches(){
+function fill_watches(value){
   for (let i=0; i<watches.length; i++){
     for (let j=0; j<watches[0].length; j++){
-      watches[i][j] = new watch(i,j,random(0,1));
+      filler = value + random(-5,5);
+      watches[i][j] = new watch(i,j,filler);
     }
   }
 }
@@ -30,6 +31,19 @@ function reportsize() {
 
 window.addEventListener('resize',reportsize);
 
+function mousePressed(){
+  for (let i=0; i<watches.length ; i++){
+    for (let j=0; j<watches[0].length; j++){
+      rect(i*block_size,j*block_size,block_size);
+      watches[i][j].selected();
+    }
+  }
+}
+
+function selection(the_watch){
+  mag = the_watch.mag;
+  fill_watches(mag);
+}
 
 function init(){
   ww = window.innerWidth;
