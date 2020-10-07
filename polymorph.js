@@ -1,9 +1,7 @@
 function polymorph(){
-  this.height = 80;
-  this.angle_1 = 45;
-  ang_lst = [45,30,100,90];
+  ang_lst = [45,30,100,90,40];
   this.root = new branch(createVector(80,160),createVector(80,80));
-  this.branches = [this.root.brancher(45),this.root.brancher(-45)];
+  this.branches = [this.root.brancher(ang_lst[-1]),this.root.brancher(-ang_lst[-1])];
   for (let i=0; i<4; i++){
     for (let j=this.branches.length-1; j>=0; j--){
       if (!this.branches[j].finished){
@@ -50,15 +48,4 @@ function branch(begin,end){
   //     var l = new branch(this.end,new_end);
   //     return l;
   // }
-}
-
-
-function setup(){
-  canvas = createCanvas(160,160);
-  background('white');
-  morph = new polymorph();
-}
-function draw(){
-  // circle(80,80,80);
-  morph.show();
 }

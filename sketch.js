@@ -5,8 +5,11 @@ let width_count;
 let height_count;
 var watches;
 
-var x_cap = block_size;
-var y_cap = block_size;
+var x_cap = 90;
+var y_cap = 90;
+var z_cap = 90;
+var u_cap = 90;
+var v_cap = 90;
 var col_cap = 254;
 
 function create_watches(x_rows,y_rows){
@@ -14,7 +17,7 @@ function create_watches(x_rows,y_rows){
   for (let i=0; i<x_rows; i++){
     watches[i] = new Array(y_rows);
   }
-  fill_watches([block_size/2,block_size/2,170]);
+  fill_watches([45,45,45,45,45,150,150,150]);
 }
 
 function fill_watches(m_lst){
@@ -72,6 +75,7 @@ function draw(){
     for (let j=0; j<watches[0].length; j++){
       fill('white');
       rect(i*block_size,j*block_size,block_size);
+      stroke(watches[i][j].mag_lst[-3],watches[i][j].mag_lst[-2],watches[i][j].mag_lst[-1]);
       watches[i][j].show();
     }
   }
