@@ -13,11 +13,11 @@ function watch(x_count,y_count,mag_lst){
   this.center_x = this.x_position + block_size/2;
   this.center_y = this.y_position + block_size/2;
 
-  this.x_mixval = this.mag_x + this.rander()*0.2;
-  this.y_mixval = this.mag_y + this.rander()*0.2;
-  this.z_mixval = this.mag_z + this.rander()*0.2;
-  this.u_mixval = this.mag_u + this.rander()*0.2;
-  this.v_mixval = this.mag_v + this.rander()*0.2;
+  this.x_mixval = this.mag_x + this.rander()*0.05;
+  this.y_mixval = this.mag_y + this.rander()*0.05;
+  this.z_mixval = this.mag_z + this.rander()*0.05;
+  this.u_mixval = this.mag_u + this.rander()*0.05;
+  this.v_mixval = this.mag_v + this.rander()*0.05;
   this.col_r_mixval = this.col_r + this.rander()*2;
   this.col_g_mixval = this.col_g + this.rander()*2;
   this.col_b_mixval = this.col_b + this.rander()*2;
@@ -27,14 +27,14 @@ function watch(x_count,y_count,mag_lst){
   this.z_val = ((this.z_mixval < z_cap) && (this.z_mixval > 0)) ? this.z_mixval : ((this.z_mixval > z_cap) ? z_cap : 0 );
   this.u_val = ((this.u_mixval < u_cap) && (this.u_mixval > 0)) ? this.u_mixval : ((this.u_mixval > u_cap) ? u_cap : 0 );
   this.v_val = ((this.v_mixval < v_cap) && (this.v_mixval > 0)) ? this.v_mixval : ((this.v_mixval > v_cap) ? v_cap : 0 );
-  this.col_r_val = ((this.col_r_mixval < col_cap) && (this.col_r_mixval > 0)) ? this.col_r_mixval : ((this.col_r_mixval > col_cap) ? col_cap : 10 );
-  this.col_g_val = ((this.col_g_mixval < col_cap) && (this.col_g_mixval > 0)) ? this.col_g_mixval : ((this.col_g_mixval > col_cap) ? col_cap : 10 );
-  this.col_b_val = ((this.col_b_mixval < col_cap) && (this.col_b_mixval > 0)) ? this.col_b_mixval : ((this.col_b_mixval > col_cap) ? col_cap : 10 );
+  this.col_r_val = ((this.col_r_mixval < col_cap) && (this.col_r_mixval > 20)) ? this.col_r_mixval : ((this.col_r_mixval > col_cap) ? col_cap : 20 );
+  this.col_g_val = ((this.col_g_mixval < col_cap) && (this.col_g_mixval > 20)) ? this.col_g_mixval : ((this.col_g_mixval > col_cap) ? col_cap : 20 );
+  this.col_b_val = ((this.col_b_mixval < col_cap) && (this.col_b_mixval > 20)) ? this.col_b_mixval : ((this.col_b_mixval > col_cap) ? col_cap : 20 );
   this.mag_lst = [ this.x_val , this.y_val , this.z_val, this.u_val, this.v_val, this.col_r_val, this.col_g_val, this.col_b_val];
   // this.root = new branch(createVector(block_size/2,block_size/2),createVector(block_size/2,block_size/8 + this.rander()));
   // this.root = new branch(createVector(this.center_x,this.center_y),createVector(this.center_x + block_size/2,this.center_y + block_size/8 + this.rander()));
-  this.root = new branch(createVector(this.center_x,this.center_y),createVector(this.center_x, this.center_y + block_size/4));
-  this.branches = [this.root.brancher(this.u_val),this.root.brancher(this.v_val)]
+  this.root = new branch(createVector(this.center_x,this.center_y),createVector(this.center_x, this.center_y + block_size/4 + this.rander()));
+  this.branches = [this.root.brancher(this.v_val),this.root.brancher(-this.v_val)]
   for (let i=0; i<4; i++){
     for (let j=this.branches.length-1; j>=0; j--){
       if (!this.branches[j].finished){

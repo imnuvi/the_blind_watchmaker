@@ -74,8 +74,9 @@ function draw(){
   for (let i=0; i<watches.length ; i++){
     for (let j=0; j<watches[0].length; j++){
       fill('white');
+      stroke('black');
       rect(i*block_size,j*block_size,block_size);
-      stroke(watches[i][j].mag_lst[-3],watches[i][j].mag_lst[-2],watches[i][j].mag_lst[-1]);
+      // stroke(watches[i][j].mag_lst[-3],watches[i][j].mag_lst[-2],watches[i][j].mag_lst[-1]);
       watches[i][j].show();
     }
   }
