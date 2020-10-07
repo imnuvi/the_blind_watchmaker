@@ -15,4 +15,4 @@ The Blind Watchmaker:
   Change the rate of mutations by altering the mutation rate value in watch.js file
 
 
-still in build phase, feel free to direct it in whichever you want
+still in build phase, feel free to direct it in whichever way you want
