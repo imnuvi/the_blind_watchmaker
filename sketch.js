@@ -5,11 +5,11 @@ let width_count;
 let height_count;
 var watches;
 
-var x_cap = 90;
-var y_cap = 90;
-var z_cap = 90;
-var u_cap = 90;
-var v_cap = 90;
+var x_cap = 360;
+var y_cap = 360;
+var z_cap = 360;
+var u_cap = 360;
+var v_cap = 360;
 var col_cap = 254;
 
 function create_watches(x_rows,y_rows){

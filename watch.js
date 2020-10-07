@@ -8,7 +8,7 @@ function watch(x_count,y_count,mag_lst){
   this.col_r = mag_lst[5];
   this.col_g = mag_lst[6];
   this.col_b = mag_lst[7];
-  this.mutation_rate = 0.03;
+  this.mutation_rate = 0.02;
   this.x_position = x_count * block_size;
   this.y_position = y_count * block_size;
   this.center_x = this.x_position + block_size/2;
