@@ -75,5 +75,5 @@ function draw(){
       watches[i][j].show();
     }
   }
-    circle(mouseX,mouseY,20);
+    // circle(mouseX,mouseY,20);
 }
