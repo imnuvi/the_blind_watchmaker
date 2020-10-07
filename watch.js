@@ -8,7 +8,7 @@ function watch(x_count,y_count,mag_lst){
   this.col_r = mag_lst[5];
   this.col_g = mag_lst[6];
   this.col_b = mag_lst[7];
-  this.mutation_rate = 0.025;
+  this.mutation_rate = 0.03;
   this.x_position = x_count * block_size;
   this.y_position = y_count * block_size;
   this.center_x = this.x_position + block_size/2;
@@ -19,9 +19,9 @@ function watch(x_count,y_count,mag_lst){
   this.z_mixval = this.mag_z + this.rander()*this.mutation_rate;
   this.u_mixval = this.mag_u + this.rander()*this.mutation_rate;
   this.v_mixval = this.mag_v + this.rander()*this.mutation_rate;
-  this.col_r_mixval = this.col_r + this.rander()*200*this.mutation_rate;
-  this.col_g_mixval = this.col_g + this.rander()*200*this.mutation_rate;
-  this.col_b_mixval = this.col_b + this.rander()*200*this.mutation_rate;
+  this.col_r_mixval = this.col_r + this.rander()*100*this.mutation_rate;
+  this.col_g_mixval = this.col_g + this.rander()*100*this.mutation_rate;
+  this.col_b_mixval = this.col_b + this.rander()*100*this.mutation_rate;
 
   this.x_val = ((this.x_mixval < x_cap) && (this.x_mixval > 0)) ? this.x_mixval : ((this.x_mixval > x_cap) ? x_cap : 0 );
   this.y_val = ((this.y_mixval < y_cap) && (this.y_mixval > 0)) ? this.y_mixval : ((this.y_mixval > y_cap) ? y_cap : 0 );
