@@ -8,16 +8,17 @@ function watch(x_count,y_count,mag_lst){
   this.col_r = mag_lst[5];
   this.col_g = mag_lst[6];
   this.col_b = mag_lst[7];
+  this.mutation_rate = 0.05
   this.x_position = x_count * block_size;
   this.y_position = y_count * block_size;
   this.center_x = this.x_position + block_size/2;
   this.center_y = this.y_position + block_size/2;
 
-  this.x_mixval = this.mag_x + this.rander()*0.05;
-  this.y_mixval = this.mag_y + this.rander()*0.05;
-  this.z_mixval = this.mag_z + this.rander()*0.05;
-  this.u_mixval = this.mag_u + this.rander()*0.05;
-  this.v_mixval = this.mag_v + this.rander()*0.05;
+  this.x_mixval = this.mag_x + this.rander()*this.mutation_rate;
+  this.y_mixval = this.mag_y + this.rander()*this.mutation_rate;
+  this.z_mixval = this.mag_z + this.rander()*this.mutation_rate;
+  this.u_mixval = this.mag_u + this.rander()*this.mutation_rate;
+  this.v_mixval = this.mag_v + this.rander()*this.mutation_rate;
   this.col_r_mixval = this.col_r + this.rander()*2;
   this.col_g_mixval = this.col_g + this.rander()*2;
   this.col_b_mixval = this.col_b + this.rander()*2;
