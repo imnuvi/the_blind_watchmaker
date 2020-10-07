@@ -8,7 +8,7 @@ function watch(x_count,y_count,mag_lst){
   this.col_r = mag_lst[5];
   this.col_g = mag_lst[6];
   this.col_b = mag_lst[7];
-  this.mutation_rate = 0.05
+  this.mutation_rate = 0.01;
   this.x_position = x_count * block_size;
   this.y_position = y_count * block_size;
   this.center_x = this.x_position + block_size/2;
@@ -34,7 +34,7 @@ function watch(x_count,y_count,mag_lst){
   this.mag_lst = [ this.x_val , this.y_val , this.z_val, this.u_val, this.v_val, this.col_r_val, this.col_g_val, this.col_b_val];
   // this.root = new branch(createVector(block_size/2,block_size/2),createVector(block_size/2,block_size/8 + this.rander()));
   // this.root = new branch(createVector(this.center_x,this.center_y),createVector(this.center_x + block_size/2,this.center_y + block_size/8 + this.rander()));
-  this.root = new branch(createVector(this.center_x,this.center_y),createVector(this.center_x, this.center_y + block_size/4 + this.rander()));
+  this.root = new branch(createVector(this.center_x,this.center_y - block_size/4),createVector(this.center_x, this.center_y + block_size/4 + this.rander()*this.mutation_rate - block_size/4));
   this.branches = [this.root.brancher(this.v_val),this.root.brancher(-this.v_val)]
   for (let i=0; i<4; i++){
     for (let j=this.branches.length-1; j>=0; j--){
