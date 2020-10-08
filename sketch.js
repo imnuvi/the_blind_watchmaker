@@ -12,6 +12,44 @@ var u_cap = 360;
 var v_cap = 360;
 var col_cap = 254;
 
+var mutation_rate = 0.05;
+
+var rand_running = false;
+var color_mode = "black";
+var alt_color_mode = "white";
+
+
+
+function start_random(){
+  if (rand_running == true){
+    frameRate(60);
+    rand_running = false;
+  }
+  else{
+    frameRate(10);
+    rand_running = true;
+  }
+}
+
+function flip_color_mode(){
+  console.log(color_mode);
+  if (color_mode == "black"){
+    // color_mode_button.style('value',"Dark theme");
+    color_mode = "light";
+    fill(color_mode);
+    stroke('white');
+
+  }
+  else{
+    // color_mode_button.style('value', "Light theme");
+    color_mode = "black";
+    fill(color_mode);
+    stroke('black');
+  }
+}
+
+
+
 function create_watches(x_rows,y_rows){
   watches = new Array(x_rows)
   for (let i=0; i<x_rows; i++){
@@ -40,10 +78,12 @@ function reportsize() {
 window.addEventListener('resize',reportsize);
 
 function mousePressed(){
-  for (let i=0; i<watches.length ; i++){
-    for (let j=0; j<watches[0].length; j++){
-      rect(i*block_size,j*block_size,block_size);
-      watches[i][j].selected();
+  if (!rand_running){
+    for (let i=0; i<watches.length ; i++){
+      for (let j=0; j<watches[0].length; j++){
+        rect(i*block_size,j*block_size,block_size);
+        watches[i][j].selected();
+      }
     }
   }
 }
@@ -64,17 +104,37 @@ function init(){
   width_count = round(ww/block_size) + 2;
   height_count = round(wh/block_size) + 2;
   create_watches(width_count,height_count);
+
+
 }
 
 function setup(){
+  var select_random = createButton("select random each generation");
+  select_random.mousePressed(start_random);
+
+  var color_mode_button = createButton("Light theme");
+  color_mode_button.mousePressed(flip_color_mode);
   init();
+  frameRate(30);
 }
 
 function draw(){
+  if (rand_running == true){
+    selection(watches[round(random(0, watches.length-1))][round(random(0,watches[0].length-1))])
+  }
+  if (color_mode == "black"){
+    fill(color_mode);
+    stroke('white');
+
+  }
+  else{
+    fill(color_mode);
+    stroke('black');
+  }
   for (let i=0; i<watches.length ; i++){
     for (let j=0; j<watches[0].length; j++){
-      fill('black');
-      stroke('white');
+        // fill(color_mode);
+        // stroke('white');
       rect(i*block_size,j*block_size,block_size);
       // stroke(watches[i][j].mag_lst[-3],watches[i][j].mag_lst[-2],watches[i][j].mag_lst[-1]);
       watches[i][j].show();

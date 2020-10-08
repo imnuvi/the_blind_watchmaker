@@ -8,7 +8,7 @@ function watch(x_count,y_count,mag_lst){
   this.col_r = mag_lst[5];
   this.col_g = mag_lst[6];
   this.col_b = mag_lst[7];
-  this.mutation_rate = 0.02;
+  this.mutation_rate = mutation_rate;
   this.x_position = x_count * block_size;
   this.y_position = y_count * block_size;
   this.center_x = this.x_position + block_size/2;
@@ -65,7 +65,7 @@ watch.prototype.show = function(){
 
 watch.prototype.selected = function(){
   m_distance = dist(mouseX,mouseY,this.center_x,this.center_y);
-  if (m_distance < block_size){
+  if (m_distance < block_size/2){
     selection(this);
   }
 }
