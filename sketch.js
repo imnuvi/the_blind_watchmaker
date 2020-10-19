@@ -12,7 +12,7 @@ var u_cap = 360;
 var v_cap = 360;
 var col_cap = 254;
 
-var mutation_rate = 0.05;
+var mutation_rate = 0.01;
 
 var rand_running = false;
 var color_mode = "black";
@@ -32,7 +32,6 @@ function start_random(){
 }
 
 function flip_color_mode(){
-  console.log(color_mode);
   if (color_mode == "black"){
     // color_mode_button.style('value',"Dark theme");
     color_mode = "light";
@@ -70,8 +69,8 @@ function fill_watches(m_lst){
 
 
 function reportsize() {
-  resizeCanvas(windowWidth, windowHeight);
-  background('black');
+  // resizeCanvas(windowWidth, windowHeight);
+  // background('black');
   init();
 }
 
