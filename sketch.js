@@ -12,7 +12,7 @@ var u_cap = 360;
 var v_cap = 360;
 var col_cap = 254;
 
-var mutation_rate = 0.05;
+var mutation_rate = 0.02;
 
 var rand_running = false;
 var color_mode = "black";
