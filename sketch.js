@@ -76,7 +76,7 @@ function reportsize() {
 
 window.addEventListener('resize',reportsize);
 
-function mousePressed(){
+function mouseClicked(){
   if (!rand_running){
     for (let i=0; i<watches.length ; i++){
       for (let j=0; j<watches[0].length; j++){
