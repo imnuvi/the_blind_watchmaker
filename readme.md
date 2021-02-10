@@ -1,5 +1,5 @@
 # the_blind_watchmaker
-Blind watch maker app concept by Rickard dawkins using p5js
+Blind watch maker app concept by Rickard dawkins using p5js<br>
 play here [The Blind Watchmaker](https://cosmoglint.github.io/the_blind_watchmaker/)
 
 ![screenshot](./screenshot/shot.png)
