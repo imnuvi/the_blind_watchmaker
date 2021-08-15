@@ -12,11 +12,20 @@ var u_cap = 360;
 var v_cap = 360;
 var col_cap = 254;
 
-var mutation_rate = 0.02;
+// min and max sizes of an organism
+var size_ratio_dip = 0.45;
+var size_ratio_cap = 0.65;
+
+var mutation_rate = 0.05;
+var mutation_min = 0.005;
+var mutation_max = 0.05;
+let mutation_slider;
 
 var rand_running = false;
 var color_mode = "black";
 var alt_color_mode = "white";
+
+var asymmetric = false;
 
 
 
@@ -47,6 +56,11 @@ function flip_color_mode(){
   }
 }
 
+function symmetric_toggle(){
+  console.log(asymmetric);
+  asymmetric = !(asymmetric)
+  fill_watches([45,45,45,45,45,150,150,150,0.6]);
+}
 
 
 function create_watches(x_rows,y_rows){
@@ -54,7 +68,7 @@ function create_watches(x_rows,y_rows){
   for (let i=0; i<x_rows; i++){
     watches[i] = new Array(y_rows);
   }
-  fill_watches([45,45,45,45,45,150,150,150]);
+  fill_watches([45,45,45,45,45,150,150,150,0.6]);
 }
 
 function fill_watches(m_lst){
@@ -104,20 +118,27 @@ function init(){
   height_count = round(wh/block_size) + 2;
   create_watches(width_count,height_count);
 
-
 }
 
 function setup(){
+
   var select_random = createButton("select random each generation");
   select_random.mousePressed(start_random);
 
+  var select_random = createButton("symmetric/asymmetric");
+  select_random.mousePressed(symmetric_toggle);
+
   var color_mode_button = createButton("Light theme");
   color_mode_button.mousePressed(flip_color_mode);
+
+  slider = createSlider(mutation_min, mutation_max, 0.04, 0.0005);
   init();
   frameRate(30);
 }
 
 function draw(){
+  // console.log(asymmetric)
+  mutation_rate = slider.value()
   if (rand_running == true){
     selection(watches[round(random(0, watches.length-1))][round(random(0,watches[0].length-1))])
   }
