@@ -12,7 +12,8 @@ var u_cap = 360;
 var v_cap = 360;
 var col_cap = 254;
 
-var mutation_rate = 0.02;
+var mutation_rate = 0.05;
+let mutation_slider;
 
 var rand_running = false;
 var color_mode = "black";
@@ -104,6 +105,8 @@ function init(){
   height_count = round(wh/block_size) + 2;
   create_watches(width_count,height_count);
 
+  slider = createSlider(0.005, 0.05, 0.04, 0.0005);
+  // slider.position(10, 10);
 
 }
 
@@ -118,6 +121,7 @@ function setup(){
 }
 
 function draw(){
+  mutation_rate = slider.value()
   if (rand_running == true){
     selection(watches[round(random(0, watches.length-1))][round(random(0,watches[0].length-1))])
   }
