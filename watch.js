@@ -15,15 +15,15 @@ function watch(x_count,y_count,mag_lst){
   this.center_x = this.x_position + block_size/2;
   this.center_y = this.y_position + block_size/2;
 
-  this.x_mixval = this.mag_x + this.rander()*this.mutation_rate;
-  this.y_mixval = this.mag_y + this.rander()*this.mutation_rate;
-  this.z_mixval = this.mag_z + this.rander()*this.mutation_rate;
-  this.u_mixval = this.mag_u + this.rander()*this.mutation_rate;
-  this.v_mixval = this.mag_v + this.rander()*this.mutation_rate;
-  this.col_r_mixval = this.col_r + this.rander()*100*this.mutation_rate;
-  this.col_g_mixval = this.col_g + this.rander()*100*this.mutation_rate;
-  this.col_b_mixval = this.col_b + this.rander()*100*this.mutation_rate;
-  this.size_ratio_mixval = this.size_ratio + this.rander()*0.02*this.mutation_rate;
+  this.x_mixval = this.rander(this.mag_x, 1);
+  this.y_mixval = this.rander(this.mag_y, 1);
+  this.z_mixval = this.rander(this.mag_z, 1);
+  this.u_mixval = this.rander(this.mag_u, 1);
+  this.v_mixval = this.rander(this.mag_v, 1);
+  this.col_r_mixval = this.rander(this.col_r,100);
+  this.col_g_mixval = this.rander(this.col_g,100);
+  this.col_b_mixval = this.rander(this.col_b,100);
+  this.size_ratio_mixval = this.rander(this.size_ratio,0.02);
   console.log(this.size_ratio_mixval, size_ratio_cap, size_ratio_dip)
 
   this.x_val = ((this.x_mixval < x_cap) && (this.x_mixval > 0)) ? this.x_mixval : ((this.x_mixval > x_cap) ? x_cap : 0 );
@@ -56,9 +56,10 @@ function watch(x_count,y_count,mag_lst){
   }
 }
 
-watch.prototype.rander = function(mag, deviation){
+watch.prototype.rander = function(mag, deviation=1){
     rand = randomGaussian(0,10);
-    val = mag * rand * deviation * mutation_rate;
+    val = mag + rand * deviation * mutation_rate;
+    console.log(val)
     return val
 }
 
