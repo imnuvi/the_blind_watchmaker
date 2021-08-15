@@ -56,9 +56,15 @@ function watch(x_count,y_count,mag_lst){
   }
 }
 
-watch.prototype.rander = function(){
-    return randomGaussian(0,10);
+watch.prototype.rander = function(mag, deviation){
+    rand = randomGaussian(0,10);
+    val = mag * rand * deviation * mutation_rate;
+    return val
 }
+
+// watch.prototype.rander = function(){
+//     return randomGaussian(0,10);
+// }
 
 watch.prototype.show = function(){
   // fill(this.mag_lst[2],this.mag_lst[3],this.mag_lst[4]);
