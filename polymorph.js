@@ -5,8 +5,15 @@ function polymorph(){
   for (let i=0; i<4; i++){
     for (let j=this.branches.length-1; j>=0; j--){
       if (!this.branches[j].finished){
-        this.branches.push(this.branches[j].brancher(ang_lst[i]));
-        this.branches.push(this.branches[j].brancher(-ang_lst[i]));
+        if (asymmetric){
+          print("asymmetric")
+          this.branches.push(this.branches[j].brancher(ang_lst[i]));
+          this.branches.push(this.branches[j].brancher(-ang_lst[ang_lst.length-i]));
+        }
+        else{
+          this.branches.push(this.branches[j].brancher(ang_lst[i]));
+          this.branches.push(this.branches[j].brancher(ang_lst[i]))
+        }
       }
       this.branches[j].finished = true;
     }
