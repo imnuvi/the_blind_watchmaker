@@ -24,17 +24,16 @@ function watch(x_count,y_count,mag_lst){
   this.col_g_mixval = this.rander(this.col_g,100);
   this.col_b_mixval = this.rander(this.col_b,100);
   this.size_ratio_mixval = this.rander(this.size_ratio,0.02);
-  console.log(this.size_ratio_mixval, size_ratio_cap, size_ratio_dip)
 
-  this.x_val = ((this.x_mixval < x_cap) && (this.x_mixval > 0)) ? this.x_mixval : ((this.x_mixval > x_cap) ? x_cap : 0 );
-  this.y_val = ((this.y_mixval < y_cap) && (this.y_mixval > 0)) ? this.y_mixval : ((this.y_mixval > y_cap) ? y_cap : 0 );
-  this.z_val = ((this.z_mixval < z_cap) && (this.z_mixval > 0)) ? this.z_mixval : ((this.z_mixval > z_cap) ? z_cap : 0 );
-  this.u_val = ((this.u_mixval < u_cap) && (this.u_mixval > 0)) ? this.u_mixval : ((this.u_mixval > u_cap) ? u_cap : 0 );
-  this.v_val = ((this.v_mixval < v_cap) && (this.v_mixval > 0)) ? this.v_mixval : ((this.v_mixval > v_cap) ? v_cap : 0 );
-  this.col_r_val = ((this.col_r_mixval < col_cap) && (this.col_r_mixval > 20)) ? this.col_r_mixval : ((this.col_r_mixval > col_cap) ? col_cap : 20 );
-  this.col_g_val = ((this.col_g_mixval < col_cap) && (this.col_g_mixval > 20)) ? this.col_g_mixval : ((this.col_g_mixval > col_cap) ? col_cap : 20 );
-  this.col_b_val = ((this.col_b_mixval < col_cap) && (this.col_b_mixval > 20)) ? this.col_b_mixval : ((this.col_b_mixval > col_cap) ? col_cap : 20 );
-  this.size_ratio_val = ((this.size_ratio_mixval < size_ratio_cap) && (this.size_ratio_mixval > size_ratio_dip)) ? this.size_ratio_mixval : ((this.size_ratio_mixval > size_ratio_cap) ? size_ratio_cap : size_ratio_dip );
+  this.x_val = this.check_range(this.x_mixval, 0, x_cap);
+  this.y_val = this.check_range(this.y_mixval, 0, y_cap);
+  this.z_val = this.check_range(this.z_mixval, 0, z_cap);
+  this.u_val = this.check_range(this.u_mixval, 0, u_cap);
+  this.v_val = this.check_range(this.v_mixval, 0, v_cap);
+  this.col_r_val = this.check_range(this.col_r_mixval, 20, col_cap);
+  this.col_g_val = this.check_range(this.col_g_mixval, 20, col_cap);
+  this.col_b_val = this.check_range(this.col_b_mixval, 20, col_cap);
+  this.size_ratio_val = this.check_range(this.size_ratio_mixval, size_ratio_dip, size_ratio_cap);
 
   // test_value for asymmetric renders find this in the branch called asymmetric
   this.test_val = ((this.v_mixval < v_cap) && (this.v_mixval > 0)) ? this.v_mixval : ((this.v_mixval > v_cap) ? v_cap : 0 );
@@ -56,12 +55,20 @@ function watch(x_count,y_count,mag_lst){
   }
 }
 
+
+watch.prototype.check_range = function(val, min_val, max_val){
+  res = ((val < max_val) && (val > min_val)) ? val : ((val > max_val) ? max_val : min_val );
+  return res
+}
+
 watch.prototype.rander = function(mag, deviation=1){
     rand = randomGaussian(0,10);
     val = mag + rand * deviation * mutation_rate;
     console.log(val)
     return val
 }
+
+
 
 // watch.prototype.rander = function(){
 //     return randomGaussian(0,10);
