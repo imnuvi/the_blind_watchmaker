@@ -21,9 +21,11 @@ polymorph.prototype.show = function(){
 }
 
 
-function branch(begin,end){
+function branch(begin,end,ratio){
   this.begin = begin;
   this.end = end;
+  this.ratio = ratio
+  // this.depth = depth;
   this.finished = false;
 
   this.show = function(){
@@ -33,10 +35,10 @@ function branch(begin,end){
   this.brancher = function(ang){
       var dir = p5.Vector.sub(this.end, this.begin);
       dir.rotate(ang);
-      dir.mult(0.6);
+      dir.mult(this.ratio);
       var new_end = p5.Vector.add(this.end,dir);
 
-      var r = new branch(this.end,new_end);
+      var r = new branch(this.end,new_end,this.ratio);
       return r;
   }
 

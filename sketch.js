@@ -12,6 +12,10 @@ var u_cap = 360;
 var v_cap = 360;
 var col_cap = 254;
 
+// min and max sizes of an organism
+var size_ratio_dip = 0.45;
+var size_ratio_cap = 0.65;
+
 var mutation_rate = 0.05;
 let mutation_slider;
 
@@ -55,7 +59,7 @@ function create_watches(x_rows,y_rows){
   for (let i=0; i<x_rows; i++){
     watches[i] = new Array(y_rows);
   }
-  fill_watches([45,45,45,45,45,150,150,150]);
+  fill_watches([45,45,45,45,45,150,150,150,0.6]);
 }
 
 function fill_watches(m_lst){
@@ -105,9 +109,6 @@ function init(){
   height_count = round(wh/block_size) + 2;
   create_watches(width_count,height_count);
 
-  slider = createSlider(0.005, 0.05, 0.04, 0.0005);
-  // slider.position(10, 10);
-
 }
 
 function setup(){
@@ -116,6 +117,8 @@ function setup(){
 
   var color_mode_button = createButton("Light theme");
   color_mode_button.mousePressed(flip_color_mode);
+
+  slider = createSlider(0.005, 0.05, 0.04, 0.0005);
   init();
   frameRate(30);
 }
