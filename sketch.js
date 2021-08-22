@@ -110,6 +110,7 @@ function init(){
   ww = window.innerWidth;
   wh = window.innerHeight;
   canvas = createCanvas(ww,wh);
+  canvas.parent("content");
   background('black');
   canvas.position(0,0);
   canvas.style('z-index','-1');
@@ -117,28 +118,21 @@ function init(){
   width_count = round(ww/block_size) + 2;
   height_count = round(wh/block_size) + 2;
   create_watches(width_count,height_count);
+  frameRate(30);
+}
+
+function set_toolbar(){
 
 }
 
+
 function setup(){
-
-  var select_random = createButton("select random each generation");
-  select_random.mousePressed(start_random);
-
-  var select_random = createButton("symmetric/asymmetric");
-  select_random.mousePressed(symmetric_toggle);
-
-  var color_mode_button = createButton("Light theme");
-  color_mode_button.mousePressed(flip_color_mode);
-
-  slider = createSlider(mutation_min, mutation_max, 0.04, 0.0005);
   init();
-  frameRate(30);
 }
 
 function draw(){
   // console.log(asymmetric)
-  mutation_rate = slider.value()
+  // mutation_rate = slider.value()
   if (rand_running == true){
     selection(watches[round(random(0, watches.length-1))][round(random(0,watches[0].length-1))])
   }

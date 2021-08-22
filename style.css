@@ -1,0 +1,11 @@
+.toolbar{
+  width: 100px;
+  height: 200px;
+  background: "white";
+  position: fixed;
+  z-index: 10;
+}
+
+#content{
+  z-index: -1;
+}
