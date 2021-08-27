@@ -1,11 +1,17 @@
 .toolbar{
-  width: 100px;
-  height: 200px;
-  background: "white";
+  display: flex;
+  flex-direction: column;
+  background-color: black;
   position: fixed;
+  right: 0;
+  top: 0;
   z-index: 10;
 }
 
 #content{
   z-index: -1;
+}
+
+.tool{
+  margin: 10px;
 }

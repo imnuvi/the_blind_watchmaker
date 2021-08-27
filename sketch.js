@@ -85,6 +85,7 @@ function fill_watches(m_lst){
 function reportsize() {
   // resizeCanvas(windowWidth, windowHeight);
   // background('black');
+  // todo: scale watches based on size and dont reload.
   init();
 }
 
@@ -122,17 +123,44 @@ function init(){
 }
 
 function set_toolbar(){
+  var toolbar = createDiv();
 
+  var select_random = createButton("select random each generation");
+  select_random.mousePressed(start_random);
+
+
+  var symmetric_button = createButton("symmetric/asymmetric");
+  symmetric_button.mousePressed(symmetric_toggle);
+
+
+  var color_mode_button = createButton("Light theme");
+  color_mode_button.mousePressed(flip_color_mode);
+  color_mode_button.addClass('tool')
+
+  mutation_slider = createSlider(mutation_min, mutation_max, 0.04, 0.0005);
+
+  //parent everyt tool to toolbar
+  toolbar.parent('toolbar');
+  select_random.parent('toolbar');
+  symmetric_button.parent('toolbar');
+  color_mode_button.parent('toolbar');
+  mutation_slider.parent('toolbar');
+  //assign classes to all the tools for easy css
+  select_random.addClass('tool')
+  symmetric_button.addClass('tool');
+  color_mode_button.addClass('tool');
+  mutation_slider.addClass('tool');
 }
 
 
 function setup(){
+  set_toolbar();
   init();
 }
 
 function draw(){
   // console.log(asymmetric)
-  // mutation_rate = slider.value()
+  mutation_rate = mutation_slider.value()
   if (rand_running == true){
     selection(watches[round(random(0, watches.length-1))][round(random(0,watches[0].length-1))])
   }
