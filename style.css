@@ -13,5 +13,8 @@
 }
 
 .tool{
+  display: flex;
+  flex-direction: row;
   margin: 10px;
+  overflow: hidden;
 }

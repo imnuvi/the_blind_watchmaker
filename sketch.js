@@ -123,7 +123,6 @@ function init(){
 }
 
 function set_toolbar(){
-  var toolbar = createDiv();
 
   var select_random = createButton("select random each generation");
   select_random.mousePressed(start_random);
@@ -140,7 +139,6 @@ function set_toolbar(){
   mutation_slider = createSlider(mutation_min, mutation_max, 0.04, 0.0005);
 
   //parent everyt tool to toolbar
-  toolbar.parent('toolbar');
   select_random.parent('toolbar');
   symmetric_button.parent('toolbar');
   color_mode_button.parent('toolbar');
