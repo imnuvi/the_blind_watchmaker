@@ -10,7 +10,20 @@
         android:id="@+id/main_watch_board"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true" />
+        android:clickable="true"
+        android:focusable="true" />
+
+    <Button
+        android:id="@+id/set_wallpaper_button"
+        android:backgroundTint="@android:color/white"
+        android:textColor="@android:color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:contentDescription="test"
+        android:text="test"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+        android:layout_margin="16dp" />
 
 <!--    <TextView-->
 <!--        android:layout_width="wrap_content"-->
