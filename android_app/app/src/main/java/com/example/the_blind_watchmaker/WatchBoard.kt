@@ -44,7 +44,7 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     private fun crateConfig(): Config {
         var drawColor = ResourcesCompat.getColor(resources, R.color.black, null)
-        return Config(this.canvasWidth, this.canvasHeight/4, drawColor)
+        return Config(this.canvasWidth, this.canvasWidth, drawColor)
     }
 
     private fun handleTouch() {
@@ -52,7 +52,7 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
         Log.d("TAG", this.canvasHeight.toString() + this.canvasWidth.toString())
         watchCanvas.drawARGB(0, 225, 225, 255);
         this.config = crateConfig()
-        var testWatch: Watch = Watch(0, this.canvasHeight/2, this.config, watchCanvas)
+        var testWatch: Watch = Watch(0, 0, this.config, watchCanvas)
         testWatch.createBranches()
         testWatch.showBranches()
     }
@@ -82,7 +82,9 @@ class Watch constructor(val startXPos: Int, val startYPos: Int, val config: Conf
     }
 
     fun calcLength(startPoint: Point, endPoint: Point): Float{
-        return (Math.sqrt(Math.pow(startPoint.x.toDouble() - endPoint.x.toDouble(), 2.0) + Math.pow(startPoint.y.toDouble() - endPoint.y.toDouble(), 2.0))).toFloat()
+        var length = Math.sqrt(Math.pow(startPoint.x.toDouble() - endPoint.x.toDouble(), 2.0) + Math.pow(startPoint.y.toDouble() - endPoint.y.toDouble(), 2.0))
+        Log.d("LENGTH", length.toString())
+        return length.toFloat()
     }
 
     fun createBranches(){
@@ -118,34 +120,35 @@ class Branch constructor(val startX: Float, val startY: Float, private val endX:
     fun extendBranch(startX: Float, startY: Float, endX: Float, endY: Float): Point{
         val newX = endX + ( ( endX - startX ) / branchLen ) * scale
         val newY = endY + ( ( endY - startY ) / branchLen ) * scale
+        Log.d("EXTENDED", newX.toString() + "     " + newY.toString())
         return Point(newX.toFloat(), newY.toFloat())
     }
 
-    fun rotateChild(angle: Float, newX: Float, newY: Float): Point{
+    fun rotateChild_11(angle: Float, newX: Float, newY: Float): Point{
 //        var childEndX = k
         var angle = Math.toRadians(angle.toDouble())
         var rotatedX = (newX - this.endX) * cos(angle.toDouble()) - ( newY - this.endY) * sin(angle.toDouble()) + this.endX
         var rotatedY = (newX - this.endX) * sin(angle.toDouble()) - ( newY - this.endY) * cos(angle.toDouble()) + this.endY
-        Log.d("ANGLE", angle.toString())
-        Log.d("DEBUG", cos(angle).toString())
-        Log.d("ORIGINAL", newX.toString() + "     " + newY.toString())
-        Log.d("ROTATED", rotatedX.toString() + "     " + rotatedY.toString())
         return Point(rotatedX.toFloat(), rotatedY.toFloat())
+    }
 
+    fun rotateChild(length: Float, angle: Float): Point{
+        var xPos = length * cos(Math.toRadians(angle.toDouble()))
+        var yPos = length * sin(Math.toRadians(angle.toDouble()))
+        Log.d("ROTATE", Math.toRadians(angle.toDouble()).toString())
+        Log.d("ROTATED VALUES", xPos.toString() + "            " + yPos.toString() )
+        return Point(xPos.toFloat(), yPos.toFloat())
+    }
+
+    fun moveToOrigin(originalPoint: Point): Point{
+        return Point(originalPoint.x + startX, originalPoint.y + startY)
     }
 
     fun showBranch(canvas: Canvas, paint: Paint){
         Log.d("TAG", "rendering branches")
-//        basically draw the branch on the canvas element.
-        val eb = extendBranch(startX, startY, endX, endY)
-        val rc = rotateChild(90.toFloat(), eb.x, eb.y)
-        Log.d("OG", startX.toString() + "     " + startY.toString())
-        Log.d("END", endX.toString() + "     " + endY.toString())
-        Log.d("EXTENDED", eb.x.toString() + "     " + eb.y.toString())
-        Log.d("ROTATED", rc.x.toString() + "     " + rc.y.toString())
-        canvas.drawLine(endX, endY, rc.x, rc.y, paint)
-        canvas.drawLine(startX, startY, endX, endY, paint)
-        canvas.drawLine(startX, startY, 100.toFloat(), 100.toFloat(), paint)
+        val rc = rotateChild(branchLen, 0.toFloat())
+        val ec = moveToOrigin(rc)
+        canvas.drawLine(startX, startY, rc.x, rc.y, paint)
     }
 
 }
