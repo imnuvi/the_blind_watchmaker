@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
+import com.google.android.material.slider.RangeSlider
+import com.google.android.material.slider.Slider
 
 class MainActivity : AppCompatActivity() {
     private var canvasBitmap: Bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
@@ -13,7 +15,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.watch_board)
-//        watchBoard = findViewById(R.id.main_watch_board)
-    }
-
+        val watchBoard: WatchBoard = findViewById(R.id.main_watch_board);
+        val mutationSlider: Slider = findViewById(R.id.mutation_slider);
+        mutationSlider.addOnChangeListener{
+            mutationSlider, value, fromUser ->
+            watchBoard.updateAngle(value)
+            }
+        }
 }
