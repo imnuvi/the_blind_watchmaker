@@ -17,3 +17,24 @@ The Blind Watchmaker:
 
 
 still in build phase, feel free to direct it in whichever way you want
+
+
+
+
+Android app
+
+Done:
+  - Basic working version with fractals
+
+TO-DO:
+  - make mutation move forward in the next generations
+  - store previous mutation stages and the previous parent
+  - settings page for confiring mutation rate and other stuff( colors maybe?? )
+  - scroll through infinite plane of organisms ( far into the future )
+
+
+Implementation:
+  - implementing the mutation propagation: 
+      Instead of storing the entire object in memory, we just store a config for each branch, which contains the angle and the 
+      length of itself, with which we can recreate the history ( history count can be decided later based on performance )
+      so for a watchboard with 10 watches, 10 config objects will be saved and rendered based on the config

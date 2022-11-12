@@ -9,23 +9,23 @@
     <com.example.the_blind_watchmaker.WatchBoard
         android:id="@+id/main_watch_board"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="match_parent"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.slider.Slider
-        android:id="@+id/mutation_slider"
-        android:layout_height="10dp"
-        android:layout_width="100dp"
-        android:layout_margin="32dp"
-        android:valueFrom="0.0"
-        android:valueTo="360.0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_watch_board"
-        />
+<!--    <com.google.android.material.slider.Slider-->
+<!--        android:id="@+id/mutation_slider"-->
+<!--        android:layout_height="10dp"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_margin="32dp"-->
+<!--        android:valueFrom="0.0"-->
+<!--        android:valueTo="360.0"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/main_watch_board"-->
+<!--        />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
