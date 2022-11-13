@@ -20,6 +20,7 @@ class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeigh
     fun setupWatch(){
         val defaultConfig: DefaultConfig = DefaultConfig()
         this.config = Config(watchCanvas, defaultConfig)
+        this.config.generateMutations()
         Log.d("TEST",this.config.canvas.toString())
         var helPaint = Paint().apply {
             color = Color.argb(255, 255, 165, 0)
@@ -69,6 +70,9 @@ class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeigh
 // TO-DO: decommission the angle, scale created for solid fractals
 class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 
+    var mutationHashMap: MutableMap<Int,BranchConfig> = mutableMapOf()
+    //    var mutationMutableMap: MutableMap<String><Float>
+
 //    val angle: Float, val scale: Float, val depth: Int, val parentBranchConfig: BranchConfig?
     val lengthScale = defaultConfig.lengthScale.toFloat()
     val lengthRandomDev = defaultConfig.lengthRandomDev.toFloat()
@@ -91,8 +95,6 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         style = Paint.Style.FILL
     }
 
-    var mutationHashMap: MutableMap<Int,BranchConfig> = mutableMapOf()
-//    var mutationMutableMap: MutableMap<String><Float>
 
     fun setup(){
         val minWatchSize = 300
@@ -108,7 +110,10 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
     }
 
     fun generateRandomRatio(startpos: Float, endpos: Float): Float{
-        val rangeval = endpos.toInt()-startpos.toInt()
+        // so apparently java random does not love 0. or anything rounded to 0. so we have to scale it to hundred perform calc and return
+        val scaledStartpos = startpos * 100
+        val scaledEndpos = endpos * 100
+        val rangeval = scaledEndpos.toInt()-scaledStartpos.toInt()
         val randomValue = Random.nextInt(rangeval)
         val finalRandom = randomValue + startpos
         return (finalRandom / 100).toFloat()
@@ -126,7 +131,7 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 
     // here, we will be creating a map which will contain the mutation for all the branches and the children will use the map as reference
     fun generateMutations(){
-        for (i in 1..depth){
+        for (i in 0..depth+1){
             val genMutationBranch = BranchConfig(generateMutatedLengthRatio(), generateMuatatedAngle())
             mutationHashMap[i] = genMutationBranch
         }
@@ -139,6 +144,7 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 //}
 class BranchConfig constructor(val lengthMut: Float, val angleMut: Float){
 }
+
 class DefaultConfig {
     val lengthScale = 0.65.toFloat()
     val lengthRandomDev = 0.1.toFloat()
@@ -154,9 +160,12 @@ class Point constructor(val x: Float, val y: Float) {
 
 class Branch constructor(val startPoint: Point, private val endPoint: Point, val branchLen: Float, val angle: Float, val config: Config, val depth: Int){
     private lateinit var childrenList: List<Branch>
+    val mutationConfig: BranchConfig = config.mutationHashMap.getValue(key=depth)
 
     fun extendBranch(startX: Float, startY: Float, endX: Float, endY: Float): Point{
-        val scale = config.lengthScale
+//        val scale = config.lengthScale
+        // getting value for mutation for branchdepth from config
+        val scale = mutationConfig.lengthMut
         val newX = endX + ( ( endX - startX ) / branchLen ) * scale
         val newY = endY + ( ( endY - startY ) / branchLen ) * scale
         return Point(newX.toFloat(), newY.toFloat())
@@ -179,8 +188,9 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
     fun spawnChildren(){
         // so each child will have the same config and each of their children will have the same config, depending on the depth
         val childLen = branchLen * config.lengthScale
-        val rightPoint = moveToOrigin(rotateChild(childLen, this.angle + config.angle))
-        val leftPoint = moveToOrigin(rotateChild(childLen, this.angle - config.angle))
+        val rotAngle = mutationConfig.angleMut
+        val rightPoint = moveToOrigin(rotateChild(childLen, this.angle + rotAngle))
+        val leftPoint = moveToOrigin(rotateChild(childLen, this.angle - rotAngle))
         val rightChild = Branch(
             endPoint,
             rightPoint,
