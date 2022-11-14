@@ -71,6 +71,7 @@ class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeigh
 class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 
     var mutationHashMap: MutableMap<Int,BranchConfig> = mutableMapOf()
+    lateinit var parentConfig: Config
     //    var mutationMutableMap: MutableMap<String><Float>
 
 //    val angle: Float, val scale: Float, val depth: Int, val parentBranchConfig: BranchConfig?
@@ -96,9 +97,9 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
     }
 
 
-    fun setup(){
-        val minWatchSize = 300
-        this.angle = 60.toFloat()
+    fun setup(config: Config){
+        this.parentConfig = config
+        // Basically set this up if a previous config is available
     }
 
 
@@ -119,20 +120,34 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         return (finalRandom / 100).toFloat()
     }
 
-    fun generateMuatatedAngle(): Float{
-        val mutationAngleFloat = generateRandomRatio(-this.angleDeviation , this.angleDeviation)
+    fun generateDeviation(parentConfig: Config) {
+        val parentHashMap = parentConfig.mutationHashMap
+        for ((key, value) in parentHashMap){
+//            mutationHashMap[key] = generateMutationsFromParent(value)
+        }
+
+    }
+
+    fun generateMutationsFromParent(){
+
+    }
+
+    fun generateMuatatedAngle(currentAngleDeviation: Float): Float{
+        val mutationAngleFloat = generateRandomRatio(currentAngleDeviation-this.angleDeviation , currentAngleDeviation+this.angleDeviation)
+        Log.d("ANGLE MUT", mutationAngleFloat.toString())
         return mutationAngleFloat
     }
 
-    fun generateMutatedLengthRatio(): Float{
-        val mutationLenFloat = generateRandomRatio(this.lengthScale-this.lengthRandomDev , this.lengthScale+this.lengthRandomDev)
+    fun generateMutatedLengthRatio(currentLengthDeviation: Float): Float{
+        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
+        Log.d("LENGTH MUT", mutationLenFloat.toString())
         return mutationLenFloat
     }
 
     // here, we will be creating a map which will contain the mutation for all the branches and the children will use the map as reference
     fun generateMutations(){
         for (i in 0..depth+1){
-            val genMutationBranch = BranchConfig(generateMutatedLengthRatio(), generateMuatatedAngle())
+            val genMutationBranch = BranchConfig(generateMutatedLengthRatio(this.angle), generateMuatatedAngle(this.lengthScale))
             mutationHashMap[i] = genMutationBranch
         }
     }
@@ -147,7 +162,7 @@ class BranchConfig constructor(val lengthMut: Float, val angleMut: Float){
 
 class DefaultConfig {
     val lengthScale = 0.65.toFloat()
-    val lengthRandomDev = 0.1.toFloat()
+    val lengthRandomDev = 0.08.toFloat()
     val angleDeviation = 20.toFloat()
     var angle: Float = 60.toFloat()
     val bgColor = Color.argb(255, 0, 0, 0)
@@ -187,7 +202,7 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
 
     fun spawnChildren(){
         // so each child will have the same config and each of their children will have the same config, depending on the depth
-        val childLen = branchLen * config.lengthScale
+        val childLen = branchLen * mutationConfig.lengthMut
         val rotAngle = mutationConfig.angleMut
         val rightPoint = moveToOrigin(rotateChild(childLen, this.angle + rotAngle))
         val leftPoint = moveToOrigin(rotateChild(childLen, this.angle - rotAngle))
@@ -195,7 +210,7 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
             endPoint,
             rightPoint,
             childLen,
-            (angle + config.angle).toFloat(),
+            (angle + rotAngle).toFloat(),
             config,
             depth + 1
         )
@@ -203,7 +218,7 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
             endPoint,
             leftPoint,
             childLen,
-            (angle - config.angle).toFloat(),
+            (angle - rotAngle).toFloat(),
             config,
             depth + 1
         )
