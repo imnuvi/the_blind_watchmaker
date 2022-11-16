@@ -18,6 +18,7 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private var watchWidth: Int = 0
     private var watchHeight: Int = 0
     private var angle: Float = 60.toFloat()
+    private lateinit var testWatch: Watch
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -51,17 +52,17 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
         val yWatchCount = this.canvasHeight / minWatchSize
         watchWidth = minWatchSize
         watchHeight = minWatchSize
+
     }
 
     private fun handleTouch() {
+//        if (!this::testWatch.isInitialized){
+            Log.d("H1","INIT BRO")
+            this.testWatch = Watch(Point(0.toFloat(),0.toFloat()), this.canvasWidth, this.canvasWidth, watchCanvas)
+//        }
+        this.testWatch.show()
         setupWatchboard()
         Log.d("TEST","running bro")
-        val testWatch: Watch = Watch(Point(0.toFloat(),0.toFloat()), this.canvasWidth, this.canvasWidth, watchCanvas)
-//        val testWatch: Watch = Watch(Point(0.toFloat(),0.toFloat()), watchWidth, watchHeight, watchCanvas)
-        testWatch.testFun()
-        testWatch.setupWatch()
-        testWatch.createBranches()
-        testWatch.showBranches()
     }
 }
 
