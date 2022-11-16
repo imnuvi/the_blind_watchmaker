@@ -150,11 +150,16 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         // so rewriting the function to give a value between 0 and 1. thats it then we scale it however we want
         val scaledStartpos = startpos
         val scaledEndpos = endpos
-        val rangeval = scaledEndpos.toInt()-scaledStartpos.toInt()
+        val rangeval = scaledEndpos-scaledStartpos
         val randomScale = generateRandomBetweenZeroOne()
         val randomValue = rangeval * randomScale
         val finalRandom = randomValue + startpos
+        Log.d("OG STARTPOS", startpos.toString())
+        Log.d("OG ENDPOS", endpos.toString())
         Log.d("FIN RAN", finalRandom.toString())
+        Log.d("Random between 0 1", randomScale.toString())
+        Log.d("rangeval", rangeval.toString())
+        Log.d("Random after scale", randomValue.toString())
         return (finalRandom).toFloat()
     }
 
@@ -181,6 +186,8 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 //        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
         //discarding this logic in favour of sending just the ratio and the branch will take care of the scaling
         val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
+        Log.d("LENGTH MUT", "--------------------------")
+        Log.d("LENGTH MUT", mutationLenFloat.toString())
         return mutationLenFloat
     }
 
@@ -189,7 +196,6 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
             val parentAngleDeviation = value.angleMut
             val parentLengthDeviation = value.lengthMut
             Log.d("Angle MUT", parentAngleDeviation.toString())
-            Log.d("LENGTH MUT", parentLengthDeviation.toString())
             mutationHashMap[key] = generateMutationsFromParent(parentAngleDeviation, parentLengthDeviation)
             Log.d("MAP VALUE", mutationHashMap[key].toString())
         }
@@ -197,7 +203,6 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
     }
 
     fun generateMutations(): MutableMap<Int,BranchConfig> {
-        Log.d("PRINTING DEPTH", depth.toString())
         val newMutationHashMap: MutableMap<Int,BranchConfig> = mutableMapOf()
         for (i in 0..depth+1){
             val genMutationBranch = BranchConfig(generateMutatedLengthRatio(this.lengthScale), generateMuatatedAngle(this.angle))
@@ -246,8 +251,8 @@ class BranchConfig constructor(val lengthMut: Float, val angleMut: Float){
 class DefaultConfig {
     var mutationHashMap: MutableMap<Int,BranchConfig> = mutableMapOf()
     val lengthScale = 0.65.toFloat()
-    val lengthRandomDev = 0.08.toFloat()
-    val angleDeviation = 20.toFloat()
+    val lengthRandomDev = 0.2.toFloat()
+    val angleDeviation = 100.toFloat()
     var angle: Float = 60.toFloat()
     var colorDeviation: Float = 10.toFloat()
     val bgColPoint = ARGBPoint(255, 0, 0, 0)
@@ -302,6 +307,8 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
     fun spawnChildren(){
         // so each child will have the same config and each of their children will have the same config, depending on the depth
         val childLen = branchLen * mutationConfig.lengthMut
+        Log.d("BRANCH MUT CONF", mutationConfig.lengthMut.toString())
+        Log.d("DEBUG LENGTH", childLen.toString() + "        " + branchLen.toString())
         val rotAngle = mutationConfig.angleMut
         val rightPoint = moveToOrigin(rotateChild(childLen, this.angle + rotAngle))
         val leftPoint = moveToOrigin(rotateChild(childLen, this.angle - rotAngle))
