@@ -9,26 +9,26 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeight: Int, val watchCanvas: Canvas) {
+class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeight: Int ) {
+    lateinit var watchCanvas: Canvas
     private var branchList: MutableList<Branch> = mutableListOf()
     private lateinit var config: Config
+    lateinit var baseBranch: Branch
 
 
     fun testFun(){
     }
 
     fun setupWatch(){
-        if (this::config.isInitialized){
-            Log.d("NEW","using new config")
-            this.config = this.config.spawnChild()
+        if (this::config.isInitialized and this::watchCanvas.isInitialized){
+            Log.d("OLD", "using old conf")
+            this.config = this.config.spawnChild(this.watchCanvas)
         }
         else{
-            Log.d("OLD","using old config")
+            Log.d("NEW", "using new conf")
             val defaultConfig: DefaultConfig = DefaultConfig()
-            this.config = Config(watchCanvas, defaultConfig)
+            this.config = Config(this.watchCanvas, defaultConfig)
         }
-        Log.d("CONFIG", config.mutationHashMap.toString() )
-
     }
 
     fun lineHelper(): List<Point>{
@@ -56,16 +56,20 @@ class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeigh
             this.config,
             0
         )
-        this.branchList.add(firstBranch)
+        this.branchList = mutableListOf(firstBranch)
+        this.baseBranch = firstBranch
     }
 
     fun showBranches(){
 //        display branches and children
         watchCanvas.drawRect(startPos.x, startPos.y, startPos.x + watchWidth, startPos.y + watchHeight, config.bgPaint)
-        for (branch in branchList){
-            branch.spawnChildren()
-            branch.showBranch()
-        }
+
+//        for (branch in branchList){
+//            branch.spawnChildren()
+//            branch.showBranch()
+//        }
+        baseBranch.spawnChildren()
+        baseBranch.showBranch()
     }
 
     fun show(){
@@ -140,7 +144,6 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
     fun generateRandomBetweenZeroOne(): Float{
         //generates a random  number between zero and one
         val randomValue = Random.nextInt(100)
-        Log.d("RANDO ZERO", (randomValue * 0.01).toString())
         return (randomValue * 0.01).toFloat()
     }
 
@@ -154,12 +157,6 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         val randomScale = generateRandomBetweenZeroOne()
         val randomValue = rangeval * randomScale
         val finalRandom = randomValue + startpos
-        Log.d("OG STARTPOS", startpos.toString())
-        Log.d("OG ENDPOS", endpos.toString())
-        Log.d("FIN RAN", finalRandom.toString())
-        Log.d("Random between 0 1", randomScale.toString())
-        Log.d("rangeval", rangeval.toString())
-        Log.d("Random after scale", randomValue.toString())
         return (finalRandom).toFloat()
     }
 
@@ -186,8 +183,6 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 //        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
         //discarding this logic in favour of sending just the ratio and the branch will take care of the scaling
         val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
-        Log.d("LENGTH MUT", "--------------------------")
-        Log.d("LENGTH MUT", mutationLenFloat.toString())
         return mutationLenFloat
     }
 
@@ -195,9 +190,7 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         for ((key, value) in parentHashMap){
             val parentAngleDeviation = value.angleMut
             val parentLengthDeviation = value.lengthMut
-            Log.d("Angle MUT", parentAngleDeviation.toString())
             mutationHashMap[key] = generateMutationsFromParent(parentAngleDeviation, parentLengthDeviation)
-            Log.d("MAP VALUE", mutationHashMap[key].toString())
         }
         return mutationHashMap
     }
@@ -219,10 +212,10 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 //        }
 //    }
 
-    fun spawnChild(): Config{
+    fun spawnChild(spawnCanvas: Canvas): Config{
         // Basically set everything up if a previous config is available
         // no actually this function is useless. We will write a spawn function which will spawn a child from itself
-        val childConfig = Config(canvas, defaultConfig)
+        val childConfig = Config(spawnCanvas, defaultConfig)
 //        childConfig.lengthScale = this.lengthScale
         childConfig.lengthRandomDev = this.lengthRandomDev
         childConfig.angleDeviation = this.angleDeviation
@@ -234,7 +227,6 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         childConfig.linePaint = this.linePaint
         childConfig.bgPaint = this.bgPaint
         childConfig.mutationHashMap = generateDeviation(this.mutationHashMap)
-        Log.d("SPAWNING", "spawning a new child")
         return childConfig
 
     }
@@ -251,8 +243,8 @@ class BranchConfig constructor(val lengthMut: Float, val angleMut: Float){
 class DefaultConfig {
     var mutationHashMap: MutableMap<Int,BranchConfig> = mutableMapOf()
     val lengthScale = 0.65.toFloat()
-    val lengthRandomDev = 0.2.toFloat()
-    val angleDeviation = 100.toFloat()
+    val lengthRandomDev = 0.08.toFloat()
+    val angleDeviation = 20.toFloat()
     var angle: Float = 60.toFloat()
     var colorDeviation: Float = 10.toFloat()
     val bgColPoint = ARGBPoint(255, 0, 0, 0)
@@ -260,6 +252,7 @@ class DefaultConfig {
     val defaultColorDev = ARGBPoint(255, 0, 0, 0)
     val bgColor = bgColPoint
     var depth: Int = 6
+    // TO-DO: create a max len to which the branch can grow
 
     fun generateRandomColor(): ARGBPoint {
         val rValue = Random.nextInt(255)
@@ -307,8 +300,6 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
     fun spawnChildren(){
         // so each child will have the same config and each of their children will have the same config, depending on the depth
         val childLen = branchLen * mutationConfig.lengthMut
-        Log.d("BRANCH MUT CONF", mutationConfig.lengthMut.toString())
-        Log.d("DEBUG LENGTH", childLen.toString() + "        " + branchLen.toString())
         val rotAngle = mutationConfig.angleMut
         val rightPoint = moveToOrigin(rotateChild(childLen, this.angle + rotAngle))
         val leftPoint = moveToOrigin(rotateChild(childLen, this.angle - rotAngle))
@@ -344,6 +335,8 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
     }
 
     fun showBranch(){
+        Log.d("RUNNING", "displaying stuff")
+        Log.d("PRINT", "printing config" + config.canvas.toString())
         val canvas = config.canvas
         val paint = config.linePaint
         canvas.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, paint)

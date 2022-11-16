@@ -28,9 +28,14 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     override fun onDraw(canvas: Canvas) {
         this.watchCanvas = canvas
-        handleTouch()
         super.onDraw(this.watchCanvas)
+        handleTouch(canvas)
+        testFun(xpp, ypp)
     }
+
+    var xpp: Float = 500.toFloat()
+    var ypp: Float = 500.toFloat()
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         var touchXPos : Float? = event?.x
         var touchYPos : Float? = event?.y
@@ -40,7 +45,10 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
             MotionEvent.ACTION_UP -> {
             }
         }
-        this.invalidate()
+        xpp = touchXPos!!.toFloat()
+        ypp = touchYPos!!.toFloat()
+        invalidate()
+//        handleTouch()
         return super.onTouchEvent(event)
     }
 
@@ -55,14 +63,29 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     }
 
-    private fun handleTouch() {
-//        if (!this::testWatch.isInitialized){
+    private fun handleTouch(canvas: Canvas) {
+        if (!this::testWatch.isInitialized){
             Log.d("H1","INIT BRO")
-            this.testWatch = Watch(Point(0.toFloat(),0.toFloat()), this.canvasWidth, this.canvasWidth, watchCanvas)
-//        }
+            this.testWatch = Watch(Point(0.toFloat(),0.toFloat()), this.canvasWidth, this.canvasWidth)
+            this.testWatch.watchCanvas = canvas
+        }
+        else{
+            this.testWatch.watchCanvas = canvas
+        }
         this.testWatch.show()
         setupWatchboard()
         Log.d("TEST","running bro")
+    }
+
+    fun testFun(x: Float, y: Float){
+        var circlePaint = Paint()
+        circlePaint.setAntiAlias(true)
+        circlePaint.setColor(Color.BLUE)
+        circlePaint.setStyle(Paint.Style.STROKE)
+        circlePaint.setStrokeJoin(Paint.Join.MITER)
+        circlePaint.setStrokeWidth(4f)
+
+        watchCanvas.drawCircle(x, y, 10.toFloat(), circlePaint)
     }
 }
 
