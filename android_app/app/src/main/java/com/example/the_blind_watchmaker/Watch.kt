@@ -91,7 +91,7 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
     var angleDeviation = defaultConfig.angleDeviation.toFloat()
     var colorDeviation = defaultConfig.colorDeviation.toFloat()
     var angle: Float = defaultConfig.angle.toFloat()
-    var drawColor = defaultConfig.generateRandomColor()
+    var drawColor = defaultConfig.randomColor
     var bgColor = defaultConfig.bgColor
     var depth: Int = defaultConfig.depth
 
@@ -141,23 +141,35 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         return colorPoint
     }
 
+//    fun generateRandomBetweenZeroOne(): Float{
+//        //generates a random  number between zero and one
+//        val randomValue = Random.nextInt(100)
+//        return (randomValue * 0.01).toFloat()
+//    }
     fun generateRandomBetweenZeroOne(): Float{
         //generates a random  number between zero and one
-        val randomValue = Random.nextInt(100)
-        return (randomValue * 0.01).toFloat()
+        return Math.random().toFloat()
     }
 
-    fun generateRandomRatio(startpos: Float, endpos: Float): Float{
+    fun generateRandomRatio(startpos: Float, endpos: Float, bounceBackStart: Float = startpos, bounceBackEnd: Float = endpos): Float{
         // so apparently java random does not love 0. or anything rounded to 0. so we have to scale it to hundred perform calc and return
         // okay. so this function is not that secure, and does nothing useful
         // so rewriting the function to give a value between 0 and 1. thats it then we scale it however we want
-        val scaledStartpos = startpos
-        val scaledEndpos = endpos
-        val rangeval = scaledEndpos-scaledStartpos
+        val rangeval = endpos-startpos
         val randomScale = generateRandomBetweenZeroOne()
         val randomValue = rangeval * randomScale
         val finalRandom = randomValue + startpos
-        return (finalRandom).toFloat()
+        val returnRandom: Float
+        if (finalRandom < bounceBackStart){
+            returnRandom = bounceBackStart + (bounceBackStart - finalRandom)
+        }
+        else if (finalRandom > bounceBackEnd){
+            returnRandom = bounceBackEnd - (finalRandom - bounceBackEnd)
+        }
+        else{
+            returnRandom = finalRandom
+        }
+        return (returnRandom).toFloat()
     }
 
 
@@ -168,9 +180,11 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 
     fun generateMuatatedColor(currentColor: ARGBPoint): ARGBPoint{
         //TO-DO: maybe replace this with a better config for deviation specific spectrum only like r g or b
-        val mutatedR = generateRandomRatio(currentColor.r-this.colorDeviation , currentColor.r+this.colorDeviation)
-        val mutatedG = generateRandomRatio(currentColor.g-this.colorDeviation , currentColor.g+this.colorDeviation)
-        val mutatedB = generateRandomRatio(currentColor.b-this.colorDeviation , currentColor.b+this.colorDeviation)
+        Log.d("TAGGING", "---------------")
+        val mutatedR = generateRandomRatio(currentColor.r-this.colorDeviation , currentColor.r+this.colorDeviation, defaultConfig.colorBounceBackStart, defaultConfig.colorBounceBackEnd)
+        val mutatedG = generateRandomRatio(currentColor.g-this.colorDeviation , currentColor.g+this.colorDeviation, defaultConfig.colorBounceBackStart, defaultConfig.colorBounceBackEnd)
+        val mutatedB = generateRandomRatio(currentColor.b-this.colorDeviation , currentColor.b+this.colorDeviation, defaultConfig.colorBounceBackStart, defaultConfig.colorBounceBackEnd)
+        Log.d("COLORS", mutatedR.toString() + "      " + mutatedG.toString() + "           "+ mutatedB.toString())
         return ARGBPoint(currentColor.a, mutatedR.toInt(), mutatedG.toInt(), mutatedB.toInt())
     }
 
@@ -182,7 +196,8 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
     fun generateMutatedLengthRatio(currentLengthDeviation: Float): Float{
 //        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
         //discarding this logic in favour of sending just the ratio and the branch will take care of the scaling
-        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
+//        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
+        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev, this.defaultConfig.minLength, this.defaultConfig.maxLength)
         return mutationLenFloat
     }
 
@@ -224,7 +239,7 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         childConfig.bgColor = this.bgColor
         childConfig.depth = this.depth
 
-        childConfig.linePaint = this.linePaint
+        childConfig.linePaint = convertToPaint(childConfig.drawColor)
         childConfig.bgPaint = this.bgPaint
         childConfig.mutationHashMap = generateDeviation(this.mutationHashMap)
         return childConfig
@@ -243,21 +258,34 @@ class BranchConfig constructor(val lengthMut: Float, val angleMut: Float){
 class DefaultConfig {
     var mutationHashMap: MutableMap<Int,BranchConfig> = mutableMapOf()
     val lengthScale = 0.65.toFloat()
+    val minLength = 0.4.toFloat()
+    val maxLength = 0.7.toFloat()
     val lengthRandomDev = 0.08.toFloat()
     val angleDeviation = 20.toFloat()
     var angle: Float = 60.toFloat()
     var colorDeviation: Float = 10.toFloat()
+    val colorBounceBackStart: Float = 40.toFloat()
+    val colorBounceBackEnd: Float = 255.toFloat()
     val bgColPoint = ARGBPoint(255, 0, 0, 0)
     val randomColor = generateRandomColor()
-    val defaultColorDev = ARGBPoint(255, 0, 0, 0)
+    val defaultColorDev = ARGBPoint(255, 10, 10, 10)
     val bgColor = bgColPoint
-    var depth: Int = 6
+    var depth: Int = 8
     // TO-DO: create a max len to which the branch can grow
 
+    fun generateRandomBetweenZeroOne(): Float{
+        //generates a random  number between zero and one
+        return Math.random().toFloat()
+    }
+
     fun generateRandomColor(): ARGBPoint {
-        val rValue = Random.nextInt(255)
-        val gValue = Random.nextInt(255)
-        val bValue = Random.nextInt(255)
+        val rRandom = generateRandomBetweenZeroOne()
+        val gRandom = generateRandomBetweenZeroOne()
+        val bRandom = generateRandomBetweenZeroOne()
+        val rValue = (255 * rRandom).toInt()
+        val gValue = (255 * gRandom).toInt()
+        val bValue = (255 * bRandom).toInt()
+        Log.d("COLORS", rValue.toString() + "      " + gValue.toString() + "           "+ bValue.toString())
         return ARGBPoint(255, rValue, gValue, bValue)
     }
 
@@ -335,8 +363,6 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
     }
 
     fun showBranch(){
-        Log.d("RUNNING", "displaying stuff")
-        Log.d("PRINT", "printing config" + config.canvas.toString())
         val canvas = config.canvas
         val paint = config.linePaint
         canvas.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, paint)
