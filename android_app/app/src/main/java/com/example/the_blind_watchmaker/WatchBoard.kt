@@ -19,6 +19,9 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private var watchHeight: Int = 0
     private var angle: Float = 60.toFloat()
     private lateinit var testWatch: Watch
+    private lateinit var testWatch2: Watch
+    private lateinit var testWatch3: Watch
+    private lateinit var testWatch4: Watch
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -30,11 +33,7 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
         this.watchCanvas = canvas
         super.onDraw(this.watchCanvas)
         handleTouch(canvas)
-        testFun(xpp, ypp)
     }
-
-    var xpp: Float = 500.toFloat()
-    var ypp: Float = 500.toFloat()
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         var touchXPos : Float? = event?.x
@@ -45,8 +44,6 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
             MotionEvent.ACTION_UP -> {
             }
         }
-        xpp = touchXPos!!.toFloat()
-        ypp = touchYPos!!.toFloat()
         invalidate()
 //        handleTouch()
         return super.onTouchEvent(event)
@@ -64,28 +61,30 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     private fun handleTouch(canvas: Canvas) {
+        canvas.drawColor(Color.argb(255,0,0,0))
         if (!this::testWatch.isInitialized){
             Log.d("H1","INIT BRO")
             this.testWatch = Watch(Point(0.toFloat(),0.toFloat()), this.canvasWidth, this.canvasWidth)
             this.testWatch.watchCanvas = canvas
+            this.testWatch2 = Watch(Point(0.toFloat(),0.toFloat()), this.canvasWidth, this.canvasWidth)
+            this.testWatch2.watchCanvas = canvas
+            this.testWatch3 = Watch(Point(0.toFloat(),0.toFloat()), this.canvasWidth, this.canvasWidth)
+            this.testWatch3.watchCanvas = canvas
+            this.testWatch4 = Watch(Point(0.toFloat(),0.toFloat()), this.canvasWidth, this.canvasWidth)
+            this.testWatch4.watchCanvas = canvas
         }
         else{
             this.testWatch.watchCanvas = canvas
+            this.testWatch2.watchCanvas = canvas
+            this.testWatch3.watchCanvas = canvas
+            this.testWatch4.watchCanvas = canvas
         }
         this.testWatch.show()
+        this.testWatch2.show()
+        this.testWatch3.show()
+        this.testWatch4.show()
         setupWatchboard()
         Log.d("TEST","running bro")
-    }
-
-    fun testFun(x: Float, y: Float){
-        var circlePaint = Paint()
-        circlePaint.setAntiAlias(true)
-        circlePaint.setColor(Color.BLUE)
-        circlePaint.setStyle(Paint.Style.STROKE)
-        circlePaint.setStrokeJoin(Paint.Join.MITER)
-        circlePaint.setStrokeWidth(4f)
-
-        watchCanvas.drawCircle(x, y, 10.toFloat(), circlePaint)
     }
 }
 

@@ -21,11 +21,9 @@ class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeigh
 
     fun setupWatch(){
         if (this::config.isInitialized and this::watchCanvas.isInitialized){
-            Log.d("OLD", "using old conf")
             this.config = this.config.spawnChild(this.watchCanvas)
         }
         else{
-            Log.d("NEW", "using new conf")
             val defaultConfig: DefaultConfig = DefaultConfig()
             this.config = Config(this.watchCanvas, defaultConfig)
         }
@@ -33,7 +31,7 @@ class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeigh
 
     fun lineHelper(): List<Point>{
         val lineStartX: Int = startPos.x.toInt() + watchWidth/2
-        val lineStartY: Int = startPos.y.toInt() + watchHeight - watchHeight/4
+        val lineStartY: Int = startPos.y.toInt() + watchHeight - watchHeight/5
         val lineEndX: Int = startPos.x.toInt() + watchWidth/2
         val lineEndY: Int = startPos.y.toInt() + watchHeight/2
         val returnSet: List<Point> = listOf<Point>(Point(lineStartX.toFloat(), lineStartY.toFloat()), Point(lineEndX.toFloat(), lineEndY.toFloat()))
@@ -62,7 +60,7 @@ class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeigh
 
     fun showBranches(){
 //        display branches and children
-        watchCanvas.drawRect(startPos.x, startPos.y, startPos.x + watchWidth, startPos.y + watchHeight, config.bgPaint)
+//        watchCanvas.drawRect(startPos.x, startPos.y, startPos.x + watchWidth, startPos.y + watchHeight, config.bgPaint)
 
 //        for (branch in branchList){
 //            branch.spawnChildren()
@@ -180,11 +178,9 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 
     fun generateMuatatedColor(currentColor: ARGBPoint): ARGBPoint{
         //TO-DO: maybe replace this with a better config for deviation specific spectrum only like r g or b
-        Log.d("TAGGING", "---------------")
         val mutatedR = generateRandomRatio(currentColor.r-this.colorDeviation , currentColor.r+this.colorDeviation, defaultConfig.colorBounceBackStart, defaultConfig.colorBounceBackEnd)
         val mutatedG = generateRandomRatio(currentColor.g-this.colorDeviation , currentColor.g+this.colorDeviation, defaultConfig.colorBounceBackStart, defaultConfig.colorBounceBackEnd)
         val mutatedB = generateRandomRatio(currentColor.b-this.colorDeviation , currentColor.b+this.colorDeviation, defaultConfig.colorBounceBackStart, defaultConfig.colorBounceBackEnd)
-        Log.d("COLORS", mutatedR.toString() + "      " + mutatedG.toString() + "           "+ mutatedB.toString())
         return ARGBPoint(currentColor.a, mutatedR.toInt(), mutatedG.toInt(), mutatedB.toInt())
     }
 
@@ -259,7 +255,7 @@ class DefaultConfig {
     var mutationHashMap: MutableMap<Int,BranchConfig> = mutableMapOf()
     val lengthScale = 0.65.toFloat()
     val minLength = 0.4.toFloat()
-    val maxLength = 0.7.toFloat()
+    val maxLength = 0.9.toFloat()
     val lengthRandomDev = 0.08.toFloat()
     val angleDeviation = 20.toFloat()
     var angle: Float = 60.toFloat()
@@ -285,7 +281,6 @@ class DefaultConfig {
         val rValue = (255 * rRandom).toInt()
         val gValue = (255 * gRandom).toInt()
         val bValue = (255 * bRandom).toInt()
-        Log.d("COLORS", rValue.toString() + "      " + gValue.toString() + "           "+ bValue.toString())
         return ARGBPoint(255, rValue, gValue, bValue)
     }
 
@@ -365,7 +360,9 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
     fun showBranch(){
         val canvas = config.canvas
         val paint = config.linePaint
-        canvas.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, paint)
+        if (depth != 0){
+            canvas.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, paint)
+        }
         val leftChild = childrenList.elementAt(0)
         val rightChild = childrenList.elementAt(1)
         if (depth == config.depth){
