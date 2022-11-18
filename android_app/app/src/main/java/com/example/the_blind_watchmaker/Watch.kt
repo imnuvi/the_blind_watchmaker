@@ -31,7 +31,7 @@ class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeigh
 
     fun lineHelper(): List<Point>{
         val lineStartX: Int = startPos.x.toInt() + watchWidth/2
-        val lineStartY: Int = startPos.y.toInt() + watchHeight - watchHeight/5
+        val lineStartY: Int = startPos.y.toInt() + watchHeight - watchHeight/3
         val lineEndX: Int = startPos.x.toInt() + watchWidth/2
         val lineEndY: Int = startPos.y.toInt() + watchHeight/2
         val returnSet: List<Point> = listOf<Point>(Point(lineStartX.toFloat(), lineStartY.toFloat()), Point(lineEndX.toFloat(), lineEndY.toFloat()))
@@ -266,7 +266,7 @@ class DefaultConfig {
     val randomColor = generateRandomColor()
     val defaultColorDev = ARGBPoint(255, 10, 10, 10)
     val bgColor = bgColPoint
-    var depth: Int = 8
+    var depth: Int = 6
     // TO-DO: create a max len to which the branch can grow
 
     fun generateRandomBetweenZeroOne(): Float{
