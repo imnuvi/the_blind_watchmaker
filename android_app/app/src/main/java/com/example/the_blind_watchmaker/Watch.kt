@@ -9,31 +9,29 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeight: Int, val watchCanvas: Canvas) {
+class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeight: Int ) {
+    lateinit var watchCanvas: Canvas
     private var branchList: MutableList<Branch> = mutableListOf()
     private lateinit var config: Config
+    lateinit var baseBranch: Branch
 
 
     fun testFun(){
     }
 
     fun setupWatch(){
-        if (this::config.isInitialized){
-            Log.d("NEW","using new config")
-            this.config = this.config.spawnChild()
+        if (this::config.isInitialized and this::watchCanvas.isInitialized){
+            this.config = this.config.spawnChild(this.watchCanvas)
         }
         else{
-            Log.d("OLD","using old config")
             val defaultConfig: DefaultConfig = DefaultConfig()
-            this.config = Config(watchCanvas, defaultConfig)
+            this.config = Config(this.watchCanvas, defaultConfig)
         }
-        Log.d("CONFIG", config.mutationHashMap.toString() )
-
     }
 
     fun lineHelper(): List<Point>{
         val lineStartX: Int = startPos.x.toInt() + watchWidth/2
-        val lineStartY: Int = startPos.y.toInt() + watchHeight - watchHeight/4
+        val lineStartY: Int = startPos.y.toInt() + watchHeight - watchHeight/3
         val lineEndX: Int = startPos.x.toInt() + watchWidth/2
         val lineEndY: Int = startPos.y.toInt() + watchHeight/2
         val returnSet: List<Point> = listOf<Point>(Point(lineStartX.toFloat(), lineStartY.toFloat()), Point(lineEndX.toFloat(), lineEndY.toFloat()))
@@ -56,16 +54,20 @@ class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeigh
             this.config,
             0
         )
-        this.branchList.add(firstBranch)
+        this.branchList = mutableListOf(firstBranch)
+        this.baseBranch = firstBranch
     }
 
     fun showBranches(){
 //        display branches and children
-        watchCanvas.drawRect(startPos.x, startPos.y, startPos.x + watchWidth, startPos.y + watchHeight, config.bgPaint)
-        for (branch in branchList){
-            branch.spawnChildren()
-            branch.showBranch()
-        }
+//        watchCanvas.drawRect(startPos.x, startPos.y, startPos.x + watchWidth, startPos.y + watchHeight, config.bgPaint)
+
+//        for (branch in branchList){
+//            branch.spawnChildren()
+//            branch.showBranch()
+//        }
+        baseBranch.spawnChildren()
+        baseBranch.showBranch()
     }
 
     fun show(){
@@ -87,7 +89,7 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
     var angleDeviation = defaultConfig.angleDeviation.toFloat()
     var colorDeviation = defaultConfig.colorDeviation.toFloat()
     var angle: Float = defaultConfig.angle.toFloat()
-    var drawColor = defaultConfig.generateRandomColor()
+    var drawColor = defaultConfig.randomColor
     var bgColor = defaultConfig.bgColor
     var depth: Int = defaultConfig.depth
 
@@ -137,30 +139,35 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         return colorPoint
     }
 
+//    fun generateRandomBetweenZeroOne(): Float{
+//        //generates a random  number between zero and one
+//        val randomValue = Random.nextInt(100)
+//        return (randomValue * 0.01).toFloat()
+//    }
     fun generateRandomBetweenZeroOne(): Float{
         //generates a random  number between zero and one
-        val randomValue = Random.nextInt(100)
-        Log.d("RANDO ZERO", (randomValue * 0.01).toString())
-        return (randomValue * 0.01).toFloat()
+        return Math.random().toFloat()
     }
 
-    fun generateRandomRatio(startpos: Float, endpos: Float): Float{
+    fun generateRandomRatio(startpos: Float, endpos: Float, bounceBackStart: Float = startpos, bounceBackEnd: Float = endpos): Float{
         // so apparently java random does not love 0. or anything rounded to 0. so we have to scale it to hundred perform calc and return
         // okay. so this function is not that secure, and does nothing useful
         // so rewriting the function to give a value between 0 and 1. thats it then we scale it however we want
-        val scaledStartpos = startpos
-        val scaledEndpos = endpos
-        val rangeval = scaledEndpos-scaledStartpos
+        val rangeval = endpos-startpos
         val randomScale = generateRandomBetweenZeroOne()
         val randomValue = rangeval * randomScale
         val finalRandom = randomValue + startpos
-        Log.d("OG STARTPOS", startpos.toString())
-        Log.d("OG ENDPOS", endpos.toString())
-        Log.d("FIN RAN", finalRandom.toString())
-        Log.d("Random between 0 1", randomScale.toString())
-        Log.d("rangeval", rangeval.toString())
-        Log.d("Random after scale", randomValue.toString())
-        return (finalRandom).toFloat()
+        val returnRandom: Float
+        if (finalRandom < bounceBackStart){
+            returnRandom = bounceBackStart + (bounceBackStart - finalRandom)
+        }
+        else if (finalRandom > bounceBackEnd){
+            returnRandom = bounceBackEnd - (finalRandom - bounceBackEnd)
+        }
+        else{
+            returnRandom = finalRandom
+        }
+        return (returnRandom).toFloat()
     }
 
 
@@ -171,9 +178,9 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 
     fun generateMuatatedColor(currentColor: ARGBPoint): ARGBPoint{
         //TO-DO: maybe replace this with a better config for deviation specific spectrum only like r g or b
-        val mutatedR = generateRandomRatio(currentColor.r-this.colorDeviation , currentColor.r+this.colorDeviation)
-        val mutatedG = generateRandomRatio(currentColor.g-this.colorDeviation , currentColor.g+this.colorDeviation)
-        val mutatedB = generateRandomRatio(currentColor.b-this.colorDeviation , currentColor.b+this.colorDeviation)
+        val mutatedR = generateRandomRatio(currentColor.r-this.colorDeviation , currentColor.r+this.colorDeviation, defaultConfig.colorBounceBackStart, defaultConfig.colorBounceBackEnd)
+        val mutatedG = generateRandomRatio(currentColor.g-this.colorDeviation , currentColor.g+this.colorDeviation, defaultConfig.colorBounceBackStart, defaultConfig.colorBounceBackEnd)
+        val mutatedB = generateRandomRatio(currentColor.b-this.colorDeviation , currentColor.b+this.colorDeviation, defaultConfig.colorBounceBackStart, defaultConfig.colorBounceBackEnd)
         return ARGBPoint(currentColor.a, mutatedR.toInt(), mutatedG.toInt(), mutatedB.toInt())
     }
 
@@ -185,9 +192,8 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
     fun generateMutatedLengthRatio(currentLengthDeviation: Float): Float{
 //        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
         //discarding this logic in favour of sending just the ratio and the branch will take care of the scaling
-        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
-        Log.d("LENGTH MUT", "--------------------------")
-        Log.d("LENGTH MUT", mutationLenFloat.toString())
+//        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev)
+        val mutationLenFloat = generateRandomRatio(currentLengthDeviation-this.lengthRandomDev , currentLengthDeviation+this.lengthRandomDev, this.defaultConfig.minLength, this.defaultConfig.maxLength)
         return mutationLenFloat
     }
 
@@ -195,9 +201,7 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         for ((key, value) in parentHashMap){
             val parentAngleDeviation = value.angleMut
             val parentLengthDeviation = value.lengthMut
-            Log.d("Angle MUT", parentAngleDeviation.toString())
             mutationHashMap[key] = generateMutationsFromParent(parentAngleDeviation, parentLengthDeviation)
-            Log.d("MAP VALUE", mutationHashMap[key].toString())
         }
         return mutationHashMap
     }
@@ -219,10 +223,10 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 //        }
 //    }
 
-    fun spawnChild(): Config{
+    fun spawnChild(spawnCanvas: Canvas): Config{
         // Basically set everything up if a previous config is available
         // no actually this function is useless. We will write a spawn function which will spawn a child from itself
-        val childConfig = Config(canvas, defaultConfig)
+        val childConfig = Config(spawnCanvas, defaultConfig)
 //        childConfig.lengthScale = this.lengthScale
         childConfig.lengthRandomDev = this.lengthRandomDev
         childConfig.angleDeviation = this.angleDeviation
@@ -231,10 +235,9 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         childConfig.bgColor = this.bgColor
         childConfig.depth = this.depth
 
-        childConfig.linePaint = this.linePaint
+        childConfig.linePaint = convertToPaint(childConfig.drawColor)
         childConfig.bgPaint = this.bgPaint
         childConfig.mutationHashMap = generateDeviation(this.mutationHashMap)
-        Log.d("SPAWNING", "spawning a new child")
         return childConfig
 
     }
@@ -251,20 +254,33 @@ class BranchConfig constructor(val lengthMut: Float, val angleMut: Float){
 class DefaultConfig {
     var mutationHashMap: MutableMap<Int,BranchConfig> = mutableMapOf()
     val lengthScale = 0.65.toFloat()
-    val lengthRandomDev = 0.2.toFloat()
-    val angleDeviation = 100.toFloat()
+    val minLength = 0.4.toFloat()
+    val maxLength = 0.9.toFloat()
+    val lengthRandomDev = 0.08.toFloat()
+    val angleDeviation = 20.toFloat()
     var angle: Float = 60.toFloat()
     var colorDeviation: Float = 10.toFloat()
+    val colorBounceBackStart: Float = 40.toFloat()
+    val colorBounceBackEnd: Float = 255.toFloat()
     val bgColPoint = ARGBPoint(255, 0, 0, 0)
     val randomColor = generateRandomColor()
-    val defaultColorDev = ARGBPoint(255, 0, 0, 0)
+    val defaultColorDev = ARGBPoint(255, 10, 10, 10)
     val bgColor = bgColPoint
     var depth: Int = 6
+    // TO-DO: create a max len to which the branch can grow
+
+    fun generateRandomBetweenZeroOne(): Float{
+        //generates a random  number between zero and one
+        return Math.random().toFloat()
+    }
 
     fun generateRandomColor(): ARGBPoint {
-        val rValue = Random.nextInt(255)
-        val gValue = Random.nextInt(255)
-        val bValue = Random.nextInt(255)
+        val rRandom = generateRandomBetweenZeroOne()
+        val gRandom = generateRandomBetweenZeroOne()
+        val bRandom = generateRandomBetweenZeroOne()
+        val rValue = (255 * rRandom).toInt()
+        val gValue = (255 * gRandom).toInt()
+        val bValue = (255 * bRandom).toInt()
         return ARGBPoint(255, rValue, gValue, bValue)
     }
 
@@ -307,8 +323,6 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
     fun spawnChildren(){
         // so each child will have the same config and each of their children will have the same config, depending on the depth
         val childLen = branchLen * mutationConfig.lengthMut
-        Log.d("BRANCH MUT CONF", mutationConfig.lengthMut.toString())
-        Log.d("DEBUG LENGTH", childLen.toString() + "        " + branchLen.toString())
         val rotAngle = mutationConfig.angleMut
         val rightPoint = moveToOrigin(rotateChild(childLen, this.angle + rotAngle))
         val leftPoint = moveToOrigin(rotateChild(childLen, this.angle - rotAngle))
@@ -346,7 +360,9 @@ class Branch constructor(val startPoint: Point, private val endPoint: Point, val
     fun showBranch(){
         val canvas = config.canvas
         val paint = config.linePaint
-        canvas.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, paint)
+        if (depth != 0){
+            canvas.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, paint)
+        }
         val leftChild = childrenList.elementAt(0)
         val rightChild = childrenList.elementAt(1)
         if (depth == config.depth){

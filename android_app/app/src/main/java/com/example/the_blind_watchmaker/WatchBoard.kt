@@ -18,7 +18,7 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private var watchWidth: Int = 0
     private var watchHeight: Int = 0
     private var angle: Float = 60.toFloat()
-    private lateinit var testWatch: Watch
+    private var watchBoard: MutableList<MutableList<Watch>> = mutableListOf()
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -28,9 +28,10 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     override fun onDraw(canvas: Canvas) {
         this.watchCanvas = canvas
-        handleTouch()
         super.onDraw(this.watchCanvas)
+        handleTouch(canvas)
     }
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         var touchXPos : Float? = event?.x
         var touchYPos : Float? = event?.y
@@ -40,28 +41,56 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
             MotionEvent.ACTION_UP -> {
             }
         }
-        this.invalidate()
+        invalidate()
+//        handleTouch()
         return super.onTouchEvent(event)
     }
 
     private fun setupWatchboard() {
-        val minWatchSize = 300
+//        val minWatchSize = 200
+        val minWatchSize = this.canvasWidth / 5
         // TODO: make sure the x and y watch counts are scalable and fit the screen
         // TODO: in the future make sure the user can move around on the screen on a infinite scale
         val xWatchCount = this.canvasWidth / minWatchSize
         val yWatchCount = this.canvasHeight / minWatchSize
+//        val xWatchCount = 2
+//        val yWatchCount = 2
         watchWidth = minWatchSize
         watchHeight = minWatchSize
+        //double loops for creating watch rows and columns
+        for (i in 0..xWatchCount){
+            val watchRow = mutableListOf<Watch>()
+            for (j in 0..yWatchCount){
+                val curWatchXPos = i * watchWidth
+                val curWatchYPos = j * watchHeight
+                var testWatch = Watch(Point(curWatchXPos.toFloat(),curWatchYPos.toFloat()), watchWidth, watchHeight)
+//                val testWatch = Watch(Point(0.toFloat(),0.toFloat()), this.canvasWidth, this.canvasHeight)
+                watchRow.add(testWatch)
+            }
+            watchBoard.add(watchRow)
+        }
 
     }
 
-    private fun handleTouch() {
-//        if (!this::testWatch.isInitialized){
+    fun createWatches(){
+    }
+
+    fun showWatches(canvas: Canvas){
+        for ( rowList in watchBoard ){
+            for ( cell in rowList) {
+                cell.watchCanvas = canvas
+                cell.show()
+            }
+        }
+    }
+
+    private fun handleTouch(canvas: Canvas) {
+        canvas.drawColor(Color.argb(255,0,0,0))
+        if (watchBoard.size == 0){
+            setupWatchboard()
             Log.d("H1","INIT BRO")
-            this.testWatch = Watch(Point(0.toFloat(),0.toFloat()), this.canvasWidth, this.canvasWidth, watchCanvas)
-//        }
-        this.testWatch.show()
-        setupWatchboard()
+        }
+        showWatches(canvas)
         Log.d("TEST","running bro")
     }
 }
