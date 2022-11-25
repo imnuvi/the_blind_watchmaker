@@ -19,6 +19,7 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private var watchHeight: Int = 0
     private var angle: Float = 60.toFloat()
     private var watchBoard: MutableList<MutableList<Watch>> = mutableListOf()
+    private lateinit var parentWatch: Watch
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -39,6 +40,7 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
             MotionEvent.ACTION_DOWN -> {}
             MotionEvent.ACTION_MOVE -> {}
             MotionEvent.ACTION_UP -> {
+                Log.d("TOUCHED", touchXPos.toString() + "        " + touchYPos.toString())
             }
         }
         invalidate()
@@ -69,13 +71,21 @@ class WatchBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet
             }
             watchBoard.add(watchRow)
         }
-
     }
 
     fun createWatches(){
     }
 
     fun showWatches(canvas: Canvas){
+        for ( rowList in watchBoard ){
+            for ( cell in rowList) {
+                cell.watchCanvas = canvas
+                cell.show()
+            }
+        }
+    }
+
+    fun showBlindWatches(canvas: Canvas){
         for ( rowList in watchBoard ){
             for ( cell in rowList) {
                 cell.watchCanvas = canvas

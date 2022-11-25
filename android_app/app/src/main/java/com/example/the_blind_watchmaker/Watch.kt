@@ -68,6 +68,7 @@ class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeigh
 //        }
         baseBranch.spawnChildren()
         baseBranch.showBranch()
+        watchCanvas.drawRect(startPos.x, startPos.y, startPos.x + watchWidth - this.config.defaultConfig.borderSize, startPos.y + watchHeight - this.config.defaultConfig.borderSize, this.config.borderPaint)
     }
 
     fun show(){
@@ -96,6 +97,7 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
     var mutationHashMap: MutableMap<Int,BranchConfig> = generateMutations()
 
     var linePaint = convertToPaint(drawColor)
+    var borderPaint = convertToBorderPaint(drawColor)
     var bgPaint = convertToPaint(bgColor)
 
 
@@ -116,6 +118,13 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
 //        var bgPaint = parentConfig.bgPaint
     }
 
+    fun convertToBorderPaint(colorPoint: ARGBPoint): Paint{
+        return Paint().apply {
+            color = convertColor(colorPoint)
+            strokeWidth = defaultConfig.borderSize.toFloat()
+            style = Paint.Style.STROKE
+        }
+    }
 
     fun convertToPaint(colorPoint: ARGBPoint): Paint{
         return Paint().apply {
@@ -231,7 +240,9 @@ class Config constructor(val canvas: Canvas, val defaultConfig: DefaultConfig){
         childConfig.lengthRandomDev = this.lengthRandomDev
         childConfig.angleDeviation = this.angleDeviation
 //        childConfig.angle = this.angle
-        childConfig.drawColor = generateMuatatedColor(this.drawColor)
+        val mutatedDrawcolor = generateMuatatedColor(this.drawColor)
+        childConfig.drawColor = mutatedDrawcolor
+        childConfig.borderPaint = convertToBorderPaint(mutatedDrawcolor)
         childConfig.bgColor = this.bgColor
         childConfig.depth = this.depth
 
@@ -267,6 +278,7 @@ class DefaultConfig {
     val defaultColorDev = ARGBPoint(255, 10, 10, 10)
     val bgColor = bgColPoint
     var depth: Int = 6
+    val borderSize: Int = 5
     // TO-DO: create a max len to which the branch can grow
 
     fun generateRandomBetweenZeroOne(): Float{
