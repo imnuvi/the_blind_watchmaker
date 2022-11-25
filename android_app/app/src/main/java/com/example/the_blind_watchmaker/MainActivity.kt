@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.watch_board)
+        supportActionBar?.hide()
         val watchBoard: WatchBoard = findViewById(R.id.main_watch_board);
 //        val mutationSlider: Slider = findViewById(R.id.mutation_slider);
 //        mutationSlider.addOnChangeListener{
