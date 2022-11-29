@@ -1,4 +1,4 @@
-package com.example.the_blind_watchmaker
+package blog.ramprakash.mutation_map
 
 import android.graphics.Canvas
 import android.graphics.Color

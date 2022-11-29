@@ -1,6 +1,6 @@
-package com.example.the_blind_watchmaker
+package blog.ramprakash.mutation_map
 
-import com.example.the_blind_watchmaker.WatchBoard
+import blog.ramprakash.mutation_map.WatchBoard
 import androidx.appcompat.app.AppCompatActivity
 import android.graphics.Bitmap
 import android.os.Bundle
