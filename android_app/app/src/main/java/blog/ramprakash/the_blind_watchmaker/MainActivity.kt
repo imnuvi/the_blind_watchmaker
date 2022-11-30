@@ -1,6 +1,6 @@
-package com.example.the_blind_watchmaker
+package blog.ramprakash.the_blind_watchmaker
 
-import com.example.the_blind_watchmaker.WatchBoard
+import blog.ramprakash.the_blind_watchmaker.WatchBoard
 import androidx.appcompat.app.AppCompatActivity
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.watch_board)
+        supportActionBar?.hide()
         val watchBoard: WatchBoard = findViewById(R.id.main_watch_board);
 //        val mutationSlider: Slider = findViewById(R.id.mutation_slider);
 //        mutationSlider.addOnChangeListener{

@@ -1,4 +1,4 @@
-package com.example.the_blind_watchmaker
+package blog.ramprakash.the_blind_watchmaker
 
 import android.graphics.Canvas
 import android.graphics.Color
@@ -12,7 +12,7 @@ import kotlin.random.Random
 class Watch constructor(val startPos: Point, val watchWidth: Int, val watchHeight: Int ) {
     lateinit var watchCanvas: Canvas
     private var branchList: MutableList<Branch> = mutableListOf()
-    private lateinit var config: Config
+    lateinit var config: Config
     lateinit var baseBranch: Branch
 
 

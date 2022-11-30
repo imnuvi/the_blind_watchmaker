@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.the_blind_watchmaker">
+    package="blog.ramprakash.the_blind_watchmaker">
 
     <application
         android:allowBackup="true"

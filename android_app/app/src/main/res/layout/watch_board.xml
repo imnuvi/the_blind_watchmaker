@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
     
-    <com.example.the_blind_watchmaker.WatchBoard
+    <blog.ramprakash.the_blind_watchmaker.WatchBoard
         android:id="@+id/main_watch_board"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
